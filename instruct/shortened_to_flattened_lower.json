@@ -1,0 +1,4292 @@
+{
+  "Background Constraint": [
+    [
+      "The Crisis of Sanity",
+      [
+        " crisis",
+        " of",
+        " sanity"
+      ]
+    ],
+    [
+      "The Fading Magic",
+      [
+        " fading",
+        " magic"
+      ]
+    ]
+  ],
+  "Central Motif": [
+    [
+      "A Ring",
+      [
+        " a",
+        " ring"
+      ]
+    ],
+    [
+      "A Doll/Automaton",
+      [
+        " a",
+        " doll",
+        "/",
+        "a",
+        "ut",
+        "omat",
+        "on"
+      ]
+    ],
+    [
+      "A Poison Bottle",
+      [
+        " a",
+        " poison",
+        " bottle"
+      ]
+    ],
+    [
+      "A Fan",
+      [
+        " a",
+        " fan"
+      ]
+    ],
+    [
+      "A Music Box",
+      [
+        " a",
+        " music",
+        " box"
+      ]
+    ],
+    [
+      "A Train/Engine",
+      [
+        " a",
+        " train",
+        "/",
+        "en",
+        "g",
+        "ine"
+      ]
+    ],
+    [
+      "A Candle/Lamp",
+      [
+        " a",
+        " candle",
+        "/",
+        "lamp"
+      ]
+    ],
+    [
+      "A Skeleton/Bone",
+      [
+        " a",
+        " skeleton",
+        "/",
+        "bone"
+      ]
+    ],
+    [
+      "A Cage",
+      [
+        " a",
+        " cage"
+      ]
+    ],
+    [
+      "A Spiderweb",
+      [
+        " a",
+        " spiderweb"
+      ]
+    ],
+    [
+      "A Knife/Dagger",
+      [
+        " a",
+        " knife",
+        "/",
+        "d",
+        "agger"
+      ]
+    ],
+    [
+      "A Bird (Caged or Free)",
+      [
+        " a",
+        " bird",
+        " (",
+        "c",
+        "aged",
+        " or",
+        " free",
+        ")"
+      ]
+    ],
+    [
+      "A Mirror",
+      [
+        " a",
+        " mirror"
+      ]
+    ],
+    [
+      "A Letter",
+      [
+        " a",
+        " letter"
+      ]
+    ],
+    [
+      "A Clock/Watch",
+      [
+        " a",
+        " clock",
+        "/",
+        "watch"
+      ]
+    ],
+    [
+      "A Veil/Mask",
+      [
+        " a",
+        " veil",
+        "/",
+        "m",
+        "ask"
+      ]
+    ],
+    [
+      "A Flower",
+      [
+        " a",
+        " flower"
+      ]
+    ],
+    [
+      "Ink",
+      [
+        " ink"
+      ]
+    ],
+    [
+      "Money/Gold",
+      [
+        " money",
+        "/",
+        "g",
+        "old"
+      ]
+    ],
+    [
+      "Blood",
+      [
+        " blood"
+      ]
+    ],
+    [
+      "A Wedding Dress",
+      [
+        " a",
+        " wedding",
+        " dress"
+      ]
+    ],
+    [
+      "A Diary/Journal",
+      [
+        " a",
+        " diary",
+        "/",
+        "j",
+        "ourn",
+        "al"
+      ]
+    ],
+    [
+      "A Portrait",
+      [
+        " a",
+        " portrait"
+      ]
+    ],
+    [
+      "A Key",
+      [
+        " a",
+        " key"
+      ]
+    ],
+    [
+      "A Lock of Hair",
+      [
+        " a",
+        " lock",
+        " of",
+        " hair"
+      ]
+    ],
+    [
+      "A Jewel",
+      [
+        " a",
+        " jewel"
+      ]
+    ]
+  ],
+  "Character Variation": [
+    [
+      "Gender Reversal",
+      [
+        " g",
+        "ender",
+        " reversal"
+      ]
+    ]
+  ],
+  "Comic Elements": [
+    [
+      "Comic Elements",
+      [
+        " comic",
+        " elements"
+      ]
+    ]
+  ],
+  "Complication": [
+    [
+      "Moved-Up Deadline",
+      [
+        " moved",
+        "-",
+        " up",
+        " deadline"
+      ]
+    ],
+    [
+      "The Parallel Self Arrives",
+      [
+        " parallel",
+        " self",
+        " arrives"
+      ]
+    ],
+    [
+      "Escape-Blocking Weather",
+      [
+        " escape",
+        "-",
+        " blocking",
+        " weather"
+      ]
+    ],
+    [
+      "The Geography Shifts",
+      [
+        " geography",
+        " shifts"
+      ]
+    ],
+    [
+      "The Name Forgotten",
+      [
+        " name",
+        " forgotten"
+      ]
+    ],
+    [
+      "Injury Limitation",
+      [
+        " injury",
+        " lim",
+        "itation"
+      ]
+    ],
+    [
+      "The Supernatural is Real",
+      [
+        " supernatural",
+        " is",
+        " real"
+      ]
+    ],
+    [
+      "The House Divides",
+      [
+        " house",
+        " div",
+        "ides"
+      ]
+    ],
+    [
+      "The Confession Misfires",
+      [
+        " confession",
+        " mis",
+        "f",
+        "ires"
+      ]
+    ],
+    [
+      "The Witness is Blind/Unreliable",
+      [
+        " witness",
+        " is",
+        " blind",
+        "/",
+        "un",
+        "re",
+        "li",
+        "able"
+      ]
+    ],
+    [
+      "The Charm Turns on Itself",
+      [
+        " charm",
+        " turns",
+        " on",
+        " itself"
+      ]
+    ],
+    [
+      "Magic Resource Fails",
+      [
+        " magic",
+        " resource",
+        " fails"
+      ]
+    ],
+    [
+      "Rival Third Party",
+      [
+        " rival",
+        " third",
+        " party"
+      ]
+    ],
+    [
+      "Ally is Enemy",
+      [
+        " ally",
+        " is",
+        " enemy"
+      ]
+    ],
+    [
+      "Metaphoric Bomb Object",
+      [
+        " metaphoric",
+        " bomb",
+        " object"
+      ]
+    ],
+    [
+      "The Inversion",
+      [
+        " inversion"
+      ]
+    ],
+    [
+      "Wire-Trick Supernatural",
+      [
+        " wire",
+        "-",
+        " trick",
+        " supernatural"
+      ]
+    ],
+    [
+      "The Benefactor Demands Repayment",
+      [
+        " benefactor",
+        " demands",
+        " repayment"
+      ]
+    ],
+    [
+      "Fear Paralysis",
+      [
+        " fear",
+        " paralysis"
+      ]
+    ],
+    [
+      "The Hypnotic Suggestion",
+      [
+        " hypnotic",
+        " suggestion"
+      ]
+    ],
+    [
+      "Unexpected Third Party",
+      [
+        " unexpected",
+        " third",
+        " party"
+      ]
+    ],
+    [
+      "The Trap is Sprung",
+      [
+        " trap",
+        " is",
+        " sprung"
+      ]
+    ],
+    [
+      "Thick Fog",
+      [
+        " thick",
+        " fog"
+      ]
+    ],
+    [
+      "The Automaton Malfunctions",
+      [
+        " automaton",
+        " malfunctions"
+      ]
+    ],
+    [
+      "The Replacement",
+      [
+        " replacement"
+      ]
+    ],
+    [
+      "Opposite Rescue Misunderstanding",
+      [
+        " opposite",
+        " rescue",
+        " misunderstanding"
+      ]
+    ],
+    [
+      "The Love Triangle",
+      [
+        " love",
+        " triangle"
+      ]
+    ],
+    [
+      "The Moral Dilemma",
+      [
+        " moral",
+        " dilemma"
+      ]
+    ],
+    [
+      "The Wrong Target",
+      [
+        " wrong",
+        " target"
+      ]
+    ],
+    [
+      "Wrong Person Learns Truth",
+      [
+        " wrong",
+        " person",
+        " learns",
+        " truth"
+      ]
+    ],
+    [
+      "The Sacrifice",
+      [
+        " sacrifice"
+      ]
+    ],
+    [
+      "The Ritual is Incomplete",
+      [
+        " ritual",
+        " is",
+        " incomplete"
+      ]
+    ],
+    [
+      "The Evidence is Destroyed",
+      [
+        " evidence",
+        " is",
+        " destroyed"
+      ]
+    ],
+    [
+      "The Secret Requires Performance",
+      [
+        " secret",
+        " requires",
+        " performance"
+      ]
+    ],
+    [
+      "The Madness",
+      [
+        " madness"
+      ]
+    ],
+    [
+      "The Rules Change",
+      [
+        " rules",
+        " change"
+      ]
+    ],
+    [
+      "Clock Time Shortens",
+      [
+        " clock",
+        " time",
+        " shortens"
+      ]
+    ],
+    [
+      "The Servant's Revolt",
+      [
+        " servant’s",
+        " revolt"
+      ]
+    ],
+    [
+      "The Witness is Blind",
+      [
+        " witness",
+        " is",
+        " blind"
+      ]
+    ],
+    [
+      "The Social Barrier",
+      [
+        " social",
+        " barrier"
+      ]
+    ],
+    [
+      "The Oath Misworded",
+      [
+        " oath",
+        " misworded"
+      ]
+    ],
+    [
+      "Crossed Conversation",
+      [
+        " crossed",
+        " conversation"
+      ]
+    ],
+    [
+      "Mundane Resource Fails",
+      [
+        " mundane",
+        " resource",
+        " fails"
+      ]
+    ],
+    [
+      "Fake Supernatural",
+      [
+        " fake",
+        " supernatural"
+      ]
+    ],
+    [
+      "The Double Exposure",
+      [
+        " double",
+        " exposure"
+      ]
+    ],
+    [
+      "Object is Bomb",
+      [
+        " object",
+        " is",
+        " bomb"
+      ]
+    ]
+  ],
+  "Constraint": [
+    [
+      "The Weight of Lies",
+      [
+        " weight",
+        " of",
+        " lies"
+      ]
+    ],
+    [
+      "The Shrinking Room",
+      [
+        " shrinking",
+        " room"
+      ]
+    ],
+    [
+      "The Eclipse",
+      [
+        " eclipse"
+      ]
+    ],
+    [
+      "The Poison",
+      [
+        " poison"
+      ]
+    ],
+    [
+      "The Social Event",
+      [
+        " social",
+        " event"
+      ]
+    ],
+    [
+      "The Metamorphosis",
+      [
+        " metamorphosis"
+      ]
+    ],
+    [
+      "The Two-Minute Interval",
+      [
+        " two",
+        "-",
+        " minute",
+        " interval"
+      ]
+    ],
+    [
+      "The Auction",
+      [
+        " auction"
+      ]
+    ],
+    [
+      "The Heartbeat",
+      [
+        " heartbeat"
+      ]
+    ],
+    [
+      "The Approaching Footsteps",
+      [
+        " approaching",
+        " footsteps"
+      ]
+    ],
+    [
+      "The Last Train",
+      [
+        " last",
+        " train"
+      ]
+    ],
+    [
+      "The Melting Ice",
+      [
+        " melting",
+        " ice"
+      ]
+    ],
+    [
+      "The Absolute Silence",
+      [
+        " absolute",
+        " silence"
+      ]
+    ],
+    [
+      "The Intruder",
+      [
+        " intruder"
+      ]
+    ],
+    [
+      "The Fading Script",
+      [
+        " fading",
+        " script"
+      ]
+    ],
+    [
+      "The Freezing Blood",
+      [
+        " freezing",
+        " blood"
+      ]
+    ],
+    [
+      "The Sunrise",
+      [
+        " sunrise"
+      ]
+    ],
+    [
+      "The Candle",
+      [
+        " candle"
+      ]
+    ],
+    [
+      "The Rising Water",
+      [
+        " rising",
+        " water"
+      ]
+    ],
+    [
+      "The Fading Memory",
+      [
+        " fading",
+        " memory"
+      ]
+    ]
+  ],
+  "Element of comedy": [
+    [
+      "Comic Elements",
+      [
+        " comic",
+        " elements"
+      ]
+    ]
+  ],
+  "Ending Disposition": [
+    [
+      "Ruin",
+      [
+        " ruin"
+      ]
+    ],
+    [
+      "Transformation",
+      [
+        " transformation"
+      ]
+    ],
+    [
+      "Ambiguity",
+      [
+        " ambiguity"
+      ]
+    ],
+    [
+      "Triumphant Reunion",
+      [
+        " triumphant",
+        " reunion"
+      ]
+    ],
+    [
+      "Bittersweet Sacrifice",
+      [
+        " bittersweet",
+        " sacrifice"
+      ]
+    ],
+    [
+      "Ambiguous Hope",
+      [
+        " ambiguous",
+        " hope"
+      ]
+    ],
+    [
+      "Tragic Separation",
+      [
+        " tragic",
+        " separation"
+      ]
+    ],
+    [
+      "Incomplete Victory",
+      [
+        " incomplete",
+        " victory"
+      ]
+    ],
+    [
+      "Mysterious Transcendence",
+      [
+        " mysterious",
+        " transcendence"
+      ]
+    ],
+    [
+      "Pyrrhic Victory",
+      [
+        " pyrrhic",
+        " victory"
+      ]
+    ],
+    [
+      "Redemptive Transformation",
+      [
+        " redemptive",
+        " transformation"
+      ]
+    ]
+  ],
+  "Glamour": [
+    [
+      "The Thin Veil",
+      [
+        " thin",
+        " veil"
+      ]
+    ],
+    [
+      "Oneiric Contagion",
+      [
+        " oneiric",
+        " contagion"
+      ]
+    ],
+    [
+      "Ink & Blood Jurisprudence",
+      [
+        " ink",
+        " &",
+        " blood",
+        " jurisprudence"
+      ]
+    ],
+    [
+      "Living Art",
+      [
+        " living",
+        " art"
+      ]
+    ],
+    [
+      "Clockwork Soul",
+      [
+        " clockwork",
+        " soul"
+      ]
+    ],
+    [
+      "Gothic Spectral",
+      [
+        " gothic",
+        " spectral"
+      ]
+    ],
+    [
+      "Botanical Horror",
+      [
+        " botanical",
+        " horror"
+      ]
+    ],
+    [
+      "Sartorial Sentience",
+      [
+        " sartorial",
+        " sentience"
+      ]
+    ],
+    [
+      "Gaslit Revelation",
+      [
+        " gaslit",
+        " revelation"
+      ]
+    ],
+    [
+      "Alchemy of Emotion",
+      [
+        " alchemy",
+        " of",
+        " emotion"
+      ]
+    ],
+    [
+      "Mercy of the Mirror",
+      [
+        " mercy",
+        " of",
+        " the",
+        " mirror"
+      ]
+    ],
+    [
+      "Echoed Phantoms",
+      [
+        " echoed",
+        " phantoms"
+      ]
+    ],
+    [
+      "Shadow Independence",
+      [
+        " shadow",
+        " independence"
+      ]
+    ],
+    [
+      "Empire Relics",
+      [
+        " empire",
+        " relics"
+      ]
+    ],
+    [
+      "Chromatic Morality",
+      [
+        " chromatic",
+        " morality"
+      ]
+    ],
+    [
+      "Anatomical Cartography",
+      [
+        " anatomical",
+        " cartography"
+      ]
+    ],
+    [
+      "Chrono-Displacement",
+      [
+        " chrono",
+        "-",
+        " displacement"
+      ]
+    ],
+    [
+      "Fluid Architecture",
+      [
+        " fluid",
+        " architecture"
+      ]
+    ],
+    [
+      "Grimm's Logic",
+      [
+        " gr",
+        "imm",
+        "’s",
+        " logic"
+      ]
+    ],
+    [
+      "Linguistic Gravity",
+      [
+        " linguistic",
+        " gravity"
+      ]
+    ],
+    [
+      "Industrial Haunt",
+      [
+        " industrial",
+        " haunt"
+      ]
+    ]
+  ],
+  "God as a reality": [
+    [
+      "God as Reality",
+      [
+        " god",
+        " as",
+        " reality"
+      ]
+    ]
+  ],
+  "Inciting Incident": [
+    [
+      "The Uncanny Recovery",
+      [
+        " uncanny",
+        " recovery"
+      ]
+    ],
+    [
+      "The Exchanged Gloves",
+      [
+        " exchanged",
+        " gloves"
+      ]
+    ],
+    [
+      "The Hidden Passage",
+      [
+        " hidden",
+        " passage"
+      ]
+    ],
+    [
+      "The Switched Child",
+      [
+        " sw",
+        "itched",
+        " child"
+      ]
+    ],
+    [
+      "Conditional Wealth Inheritance",
+      [
+        " condition",
+        "al",
+        " wealth",
+        " inheritance"
+      ]
+    ],
+    [
+      "Buried Secret",
+      [
+        " buried",
+        " secret"
+      ]
+    ],
+    [
+      "The Séance",
+      [
+        " séance"
+      ]
+    ],
+    [
+      "The Midnight Garden",
+      [
+        " midnight",
+        " garden"
+      ]
+    ],
+    [
+      "The Reluctant Guardian",
+      [
+        " reluctant",
+        " guardian"
+      ]
+    ],
+    [
+      "The Deadline",
+      [
+        " deadline"
+      ]
+    ],
+    [
+      "Problematic New Invention",
+      [
+        " pro",
+        "ble",
+        "matic",
+        " new",
+        " invention"
+      ]
+    ],
+    [
+      "The Uninvited Guest",
+      [
+        " uninvited",
+        " guest"
+      ]
+    ],
+    [
+      "Trace-Less Disappearance",
+      [
+        " trace",
+        "-",
+        " less",
+        " disappearance"
+      ]
+    ],
+    [
+      "The Unwanted Betrothal Notice",
+      [
+        " unwanted",
+        " betrothal",
+        " notice"
+      ]
+    ],
+    [
+      "Hidden Room Revealed",
+      [
+        " hidden",
+        " room",
+        " revealed"
+      ]
+    ],
+    [
+      "Guest Can’t Leave",
+      [
+        " guest",
+        " can’t",
+        " leave"
+      ]
+    ],
+    [
+      "The Garden’s Bloom",
+      [
+        " garden’s",
+        " bloom"
+      ]
+    ],
+    [
+      "The Sudden Illness",
+      [
+        " sudden",
+        " illness"
+      ]
+    ],
+    [
+      "The Repeating Day",
+      [
+        " repeating",
+        " day"
+      ]
+    ],
+    [
+      "The Anniversary Visitor",
+      [
+        " anniversary",
+        " visitor"
+      ]
+    ],
+    [
+      "The Charitable Deception",
+      [
+        " charitable",
+        " deception"
+      ]
+    ],
+    [
+      "The Sealed Room",
+      [
+        " sealed",
+        " room"
+      ]
+    ],
+    [
+      "The Pressed Flower",
+      [
+        " pressed",
+        " flower"
+      ]
+    ],
+    [
+      "The Interrupted Journey",
+      [
+        " interrupted",
+        " journey"
+      ]
+    ],
+    [
+      "The Familiar Stranger",
+      [
+        " familiar",
+        " stranger"
+      ]
+    ],
+    [
+      "The Footsteps Above",
+      [
+        " footsteps",
+        " above"
+      ]
+    ],
+    [
+      "Blackmail Social Scandal",
+      [
+        " blackmail",
+        " social",
+        " scandal"
+      ]
+    ],
+    [
+      "Silent Signal",
+      [
+        " silent",
+        " signal"
+      ]
+    ],
+    [
+      "The Locked Room",
+      [
+        " locked",
+        " room"
+      ]
+    ],
+    [
+      "Empty Room Music",
+      [
+        " empty",
+        " room",
+        " music"
+      ]
+    ],
+    [
+      "The Lost Engagement Ring",
+      [
+        " lost",
+        " engagement",
+        " ring"
+      ]
+    ],
+    [
+      "The Wager",
+      [
+        " wager"
+      ]
+    ],
+    [
+      "The Forbidden Correspondence",
+      [
+        " forbidden",
+        " correspondence"
+      ]
+    ],
+    [
+      "The Wrong Reflection",
+      [
+        " wrong",
+        " reflection"
+      ]
+    ],
+    [
+      "The Midnight Summons",
+      [
+        " midnight",
+        " summons"
+      ]
+    ],
+    [
+      "Breathing-House Inheritance",
+      [
+        " breathing",
+        "-",
+        " house",
+        " inheritance"
+      ]
+    ],
+    [
+      "Broken Mirror Taboo",
+      [
+        " broken",
+        " mirror",
+        " taboo"
+      ]
+    ],
+    [
+      "The Interrupted Engagement",
+      [
+        " interrupted",
+        " engagement"
+      ]
+    ],
+    [
+      "The Failed Séance",
+      [
+        " failed",
+        " séance"
+      ]
+    ],
+    [
+      "The Etiquette Tutor",
+      [
+        " etiquette",
+        " tutor"
+      ]
+    ],
+    [
+      "The Impossible Advertisement",
+      [
+        " impossible",
+        " advertisement"
+      ]
+    ],
+    [
+      "The Ghost Fog",
+      [
+        " ghost",
+        " fog"
+      ]
+    ],
+    [
+      "The Recurring Dream",
+      [
+        " recurring",
+        " dream"
+      ]
+    ],
+    [
+      "Trapping Storm",
+      [
+        " trapping",
+        " storm"
+      ]
+    ],
+    [
+      "Humming Cursed Purchase",
+      [
+        " humming",
+        " cursed",
+        " purchase"
+      ]
+    ],
+    [
+      "The Impossible Portrait",
+      [
+        " impossible",
+        " portrait"
+      ]
+    ],
+    [
+      "The Disguised Station",
+      [
+        " disguised",
+        " station"
+      ]
+    ],
+    [
+      "The Portrait Commission",
+      [
+        " portrait",
+        " commission"
+      ]
+    ],
+    [
+      "The Obsession",
+      [
+        " obsession"
+      ]
+    ],
+    [
+      "The Shifting Constellations",
+      [
+        " shifting",
+        " constellations"
+      ]
+    ],
+    [
+      "Ghost Misdelivered Letter",
+      [
+        " ghost",
+        " misdelivered",
+        " letter"
+      ]
+    ],
+    [
+      "Plain-Sight Disappearance",
+      [
+        " plain",
+        "-",
+        " sight",
+        " disappearance"
+      ]
+    ],
+    [
+      "The Proxy Errand",
+      [
+        " proxy",
+        " errand"
+      ]
+    ],
+    [
+      "The Rival's Arrival",
+      [
+        " rival’s",
+        " arrival"
+      ]
+    ],
+    [
+      "Stranger Arrival",
+      [
+        " stranger",
+        " arrival"
+      ]
+    ],
+    [
+      "The Dance Refused",
+      [
+        " dance",
+        " refused"
+      ]
+    ],
+    [
+      "The Unknown Heir",
+      [
+        " unknown",
+        " heir"
+      ]
+    ],
+    [
+      "The Improper Chaperone",
+      [
+        " improper",
+        " chaperone"
+      ]
+    ],
+    [
+      "The Sudden Reputation",
+      [
+        " sudden",
+        " reputation"
+      ]
+    ],
+    [
+      "Wrong-Recipient Letter",
+      [
+        " wrong",
+        "-",
+        " recipient",
+        " letter"
+      ]
+    ],
+    [
+      "The Servant’s Warning",
+      [
+        " servant’s",
+        " warning"
+      ]
+    ],
+    [
+      "Unstoppable New Invention",
+      [
+        " unstoppable",
+        " new",
+        " invention"
+      ]
+    ],
+    [
+      "Broken Social Taboo",
+      [
+        " broken",
+        " social",
+        " taboo"
+      ]
+    ],
+    [
+      "The Doppelgänger",
+      [
+        " doppelgänger"
+      ]
+    ],
+    [
+      "The Obituary Before Its Time",
+      [
+        " obituary",
+        " before",
+        " its",
+        " time"
+      ]
+    ],
+    [
+      "The Chaperone's Absence",
+      [
+        " chaperone’s",
+        " absence"
+      ]
+    ],
+    [
+      "The Missing Reflection",
+      [
+        " missing",
+        " reflection"
+      ]
+    ],
+    [
+      "The Poisoning",
+      [
+        " poisoning"
+      ]
+    ],
+    [
+      "Supernatural Social Scandal",
+      [
+        " supernatural",
+        " social",
+        " scandal"
+      ]
+    ],
+    [
+      "The Wrong House",
+      [
+        " wrong",
+        " house"
+      ]
+    ],
+    [
+      "Haunted Cursed Purchase",
+      [
+        " haunted",
+        " cursed",
+        " purchase"
+      ]
+    ],
+    [
+      "The Ill-Timed Confession",
+      [
+        " ill",
+        "-",
+        " timed",
+        " confession"
+      ]
+    ],
+    [
+      "Name-Knowing Stranger",
+      [
+        " name",
+        "-",
+        " knowing",
+        " stranger"
+      ]
+    ],
+    [
+      "The Anniversary Vigil",
+      [
+        " anniversary",
+        " vigil"
+      ]
+    ],
+    [
+      "The Unsuitable Alliance",
+      [
+        " unsuitable",
+        " alliance"
+      ]
+    ],
+    [
+      "The Family Resemblance",
+      [
+        " family",
+        " resemblance"
+      ]
+    ],
+    [
+      "The Forbidden Field",
+      [
+        " forbidden",
+        " field"
+      ]
+    ],
+    [
+      "The Phantom Debt",
+      [
+        " phantom",
+        " debt"
+      ]
+    ],
+    [
+      "Bricked-Window Signal",
+      [
+        " bricked",
+        "-",
+        " window",
+        " signal"
+      ]
+    ],
+    [
+      "The Mistaken Identity",
+      [
+        " mistaken",
+        " identity"
+      ]
+    ],
+    [
+      "The Stolen Relic",
+      [
+        " stolen",
+        " relic"
+      ]
+    ],
+    [
+      "The Public Accusation",
+      [
+        " public",
+        " accusation"
+      ]
+    ],
+    [
+      "The Blood Debt",
+      [
+        " blood",
+        " debt"
+      ]
+    ]
+  ],
+  "Marital Circumstance": [
+    [
+      "Single Protagonist",
+      [
+        " single",
+        " protagonist"
+      ]
+    ],
+    [
+      "Good Marriage",
+      [
+        " good",
+        " marriage"
+      ]
+    ],
+    [
+      "Bad Marriage",
+      [
+        " bad",
+        " marriage"
+      ]
+    ]
+  ],
+  "Motif": [
+    [
+      "A Shadow Without an Owner",
+      [
+        " a",
+        " shadow",
+        " without",
+        " an",
+        " owner"
+      ]
+    ],
+    [
+      "13-Hour Pocket Watch",
+      [
+        " 13",
+        "-",
+        " hour",
+        " pocket",
+        " watch"
+      ]
+    ],
+    [
+      "A Monocle of True Sight",
+      [
+        " a",
+        " monocle",
+        " of",
+        " true",
+        " sight"
+      ]
+    ],
+    [
+      "Childlike Porcelain Doll",
+      [
+        " child",
+        "like",
+        " porcelain",
+        " doll"
+      ]
+    ],
+    [
+      "Changing Portrait Locket",
+      [
+        " changing",
+        " portrait",
+        " locket"
+      ]
+    ],
+    [
+      "Truth Music Box",
+      [
+        " truth",
+        " music",
+        " box"
+      ]
+    ],
+    [
+      "Indelible Ink",
+      [
+        " indelible",
+        " ink"
+      ]
+    ],
+    [
+      "Intangible-Touch Velvet Glove",
+      [
+        " intangible",
+        "-",
+        " touch",
+        " velvet",
+        " glove"
+      ]
+    ],
+    [
+      "Fusing Mask",
+      [
+        " fusing",
+        " mask"
+      ]
+    ],
+    [
+      "Poison-Elixir Vial",
+      [
+        " poison",
+        "-",
+        " elixir",
+        " vial"
+      ]
+    ],
+    [
+      "Unremovable Ring",
+      [
+        " unre",
+        "m",
+        "ov",
+        "able",
+        " ring"
+      ]
+    ],
+    [
+      "A Heart in a Jar",
+      [
+        " a",
+        " heart",
+        " in",
+        " a",
+        " jar"
+      ]
+    ],
+    [
+      "A Weeping Chandelier",
+      [
+        " a",
+        " weeping",
+        " chandelier"
+      ]
+    ],
+    [
+      "Recurring Tarot Card",
+      [
+        " recurring",
+        " tarot",
+        " card"
+      ]
+    ],
+    [
+      "A Spool of Silver Thread",
+      [
+        " a",
+        " spool",
+        " of",
+        " silver",
+        " thread"
+      ]
+    ],
+    [
+      "Universal Skeleton Key",
+      [
+        " universal",
+        " skeleton",
+        " key"
+      ]
+    ],
+    [
+      "Blooming Wilted Rose",
+      [
+        " blooming",
+        " wilted",
+        " rose"
+      ]
+    ],
+    [
+      "Revealing Silver Mirror",
+      [
+        " revealing",
+        " silver",
+        " mirror"
+      ]
+    ],
+    [
+      "Prophetic Caged Bird",
+      [
+        " prophetic",
+        " caged",
+        " bird"
+      ]
+    ],
+    [
+      "A Red Scarf/Ribbon",
+      [
+        " a",
+        " red",
+        " scarf",
+        "/",
+        "ri",
+        "bb",
+        "on"
+      ]
+    ]
+  ],
+  "Plot Reversal": [
+    [
+      "Partial Plot Reversal",
+      [
+        " plot",
+        " reversal"
+      ]
+    ]
+  ],
+  "Protagonist": [
+    [
+      "Half-Machine Factory Foreman",
+      [
+        " half",
+        "-",
+        " machine",
+        " factory",
+        " foreman"
+      ]
+    ],
+    [
+      "The Riverboatwoman/Ferryman",
+      [
+        " riverboat",
+        "woman",
+        "/",
+        "fer",
+        "ry",
+        "man"
+      ]
+    ],
+    [
+      "The Cabman",
+      [
+        " cabman"
+      ]
+    ],
+    [
+      "The Schoolmistress",
+      [
+        " schoolmistress"
+      ]
+    ],
+    [
+      "The Librarian/Archivist",
+      [
+        " librarian",
+        "/",
+        "arch",
+        "iv",
+        "ist"
+      ]
+    ],
+    [
+      "The Brewery Heiress",
+      [
+        " brewery",
+        " heiress"
+      ]
+    ],
+    [
+      "The Silhouette Artist",
+      [
+        " silhouette",
+        " artist"
+      ]
+    ],
+    [
+      "The Housemaid with Sharp Ears",
+      [
+        " housemaid",
+        " with",
+        " sharp",
+        " ears"
+      ]
+    ],
+    [
+      "The Astronomer’s Wife",
+      [
+        " ast",
+        "ronom",
+        "er’s",
+        " wife"
+      ]
+    ],
+    [
+      "Hardened Factory Foreman",
+      [
+        " hardened",
+        " factory",
+        " foreman"
+      ]
+    ],
+    [
+      "The Mesmerist/Hypnotist",
+      [
+        " mesmerist",
+        "/",
+        "hy",
+        "p",
+        "not",
+        "ist"
+      ]
+    ],
+    [
+      "The Apothecary/Chemist",
+      [
+        " apothecary",
+        "/",
+        "chem",
+        "ist"
+      ]
+    ],
+    [
+      "The Phantom Postmaster",
+      [
+        " phantom",
+        " postmaster"
+      ]
+    ],
+    [
+      "The Botanist of Hothouses",
+      [
+        " botanist",
+        " of",
+        " hothouses"
+      ]
+    ],
+    [
+      "The Lonely Spinster/Bachelor",
+      [
+        " lonely",
+        " spinster",
+        "/",
+        "bac",
+        "hel",
+        "or"
+      ]
+    ],
+    [
+      "The Wet Nurse",
+      [
+        " wet",
+        " nurse"
+      ]
+    ],
+    [
+      "The Scent-Weaver",
+      [
+        " scent",
+        "-",
+        " weaver"
+      ]
+    ],
+    [
+      "The Penny-Dreadful Writer",
+      [
+        " penny",
+        "-",
+        " dreadful",
+        " writer"
+      ]
+    ],
+    [
+      "The Canal Bargeman",
+      [
+        " canal",
+        " bargeman"
+      ]
+    ],
+    [
+      "The Charity Visitor",
+      [
+        " charity",
+        " visitor"
+      ]
+    ],
+    [
+      "The Antique Dealer",
+      [
+        " antique",
+        " dealer"
+      ]
+    ],
+    [
+      "The Milliner/Dressmaker",
+      [
+        " milliner",
+        "/",
+        "d",
+        "ress",
+        "maker"
+      ]
+    ],
+    [
+      "The Governess",
+      [
+        " governess"
+      ]
+    ],
+    [
+      "The Barrister’s Daughter/Son",
+      [
+        " barrister’s",
+        " daughter",
+        "/",
+        "son"
+      ]
+    ],
+    [
+      "The Orphaned Heiress",
+      [
+        " orphaned",
+        " heiress"
+      ]
+    ],
+    [
+      "The Opium-Eater Poet",
+      [
+        " opium",
+        "-",
+        " e",
+        "ater",
+        " poet"
+      ]
+    ],
+    [
+      "Magical Foreign Stranger",
+      [
+        " magical",
+        " foreign",
+        " stranger"
+      ]
+    ],
+    [
+      "The Returned Soldier",
+      [
+        " returned",
+        " soldier"
+      ]
+    ],
+    [
+      "The Antiquarian Jeweler",
+      [
+        " antiquarian",
+        " jeweler"
+      ]
+    ],
+    [
+      "The Cartographer of Dreams",
+      [
+        " cartographer",
+        " of",
+        " dreams"
+      ]
+    ],
+    [
+      "Fate Debt Collector",
+      [
+        " fate",
+        " debt",
+        " collector"
+      ]
+    ],
+    [
+      "Shadowed New Wife",
+      [
+        " shadowed",
+        " new",
+        " wife"
+      ]
+    ],
+    [
+      "Suspicious Foreign Stranger",
+      [
+        " suspicious",
+        " foreign",
+        " stranger"
+      ]
+    ],
+    [
+      "Skeptical Stage Magician",
+      [
+        " skeptical",
+        " stage",
+        " magician"
+      ]
+    ],
+    [
+      "The Archivist",
+      [
+        " archivist"
+      ]
+    ],
+    [
+      "The Asylum Attendant",
+      [
+        " asylum",
+        " attendant"
+      ]
+    ],
+    [
+      "The Chimney-Sweep Master",
+      [
+        " chimney",
+        "-",
+        " sweep",
+        " master"
+      ]
+    ],
+    [
+      "The Orphaned Heir in Hiding",
+      [
+        " orphaned",
+        " heir",
+        " in",
+        " hiding"
+      ]
+    ],
+    [
+      "The Rat Catcher",
+      [
+        " rat",
+        " catcher"
+      ]
+    ],
+    [
+      "The Keeper of Lodgings",
+      [
+        " keeper",
+        " of",
+        " lodgings"
+      ]
+    ],
+    [
+      "The Surgeon",
+      [
+        " surgeon"
+      ]
+    ],
+    [
+      "The Clockmaker",
+      [
+        " clockmaker"
+      ]
+    ],
+    [
+      "Life-Years Debt Collector",
+      [
+        " life",
+        "-",
+        " years",
+        " debt",
+        " collector"
+      ]
+    ],
+    [
+      "Haunted New Wife",
+      [
+        " haunted",
+        " new",
+        " wife"
+      ]
+    ],
+    [
+      "The Maid",
+      [
+        " maid"
+      ]
+    ],
+    [
+      "Spell-Embroidering Debutante",
+      [
+        " spell",
+        "-",
+        " embroidering",
+        " debutante"
+      ]
+    ],
+    [
+      "The Photographer (Spirit Plates)",
+      [
+        " photographer",
+        " (",
+        "spirit",
+        " plates",
+        ")"
+      ]
+    ],
+    [
+      "The Velvet-Voiced Courtesan",
+      [
+        " velvet",
+        "-",
+        " voiced",
+        " courtesan"
+      ]
+    ],
+    [
+      "Secretly Magical Stage Magician",
+      [
+        " secretly",
+        " magical",
+        " stage",
+        " magician"
+      ]
+    ],
+    [
+      "The Telegraph Operator",
+      [
+        " telegraph",
+        " operator"
+      ]
+    ],
+    [
+      "Obsessive Artist",
+      [
+        " obsessive",
+        " artist"
+      ]
+    ],
+    [
+      "The Parish Seamstress",
+      [
+        " parish",
+        " seamstress"
+      ]
+    ],
+    [
+      "The Spiritualist’s Assistant",
+      [
+        " spiritual",
+        "ist’s",
+        " assistant"
+      ]
+    ],
+    [
+      "The Clerk",
+      [
+        " clerk"
+      ]
+    ],
+    [
+      "The Aristocrat in Hiding",
+      [
+        " aristocrat",
+        " in",
+        " hiding"
+      ]
+    ],
+    [
+      "Sighted Repressed Governess",
+      [
+        " sight",
+        "ed",
+        " repressed",
+        " governess"
+      ]
+    ],
+    [
+      "The Professional Mourner",
+      [
+        " professional",
+        " mourner"
+      ]
+    ],
+    [
+      "The Widow",
+      [
+        " widow"
+      ]
+    ],
+    [
+      "The Vicar",
+      [
+        " vicar"
+      ]
+    ],
+    [
+      "The Botanist",
+      [
+        " botanist"
+      ]
+    ],
+    [
+      "The Neurotic Lady",
+      [
+        " neurotic",
+        " lady"
+      ]
+    ],
+    [
+      "The Medical Doctor",
+      [
+        " medical",
+        " doctor"
+      ]
+    ],
+    [
+      "The Rabbi",
+      [
+        " rabbi"
+      ]
+    ],
+    [
+      "The Medium",
+      [
+        " medium"
+      ]
+    ],
+    [
+      "The Naval Captain Returned Inland",
+      [
+        " naval",
+        " captain",
+        " returned",
+        " inland"
+      ]
+    ],
+    [
+      "Grim Resurrection Man",
+      [
+        " grim",
+        " resurrection",
+        " man"
+      ]
+    ],
+    [
+      "The Music Hall Singer",
+      [
+        " music",
+        " hall",
+        " singer"
+      ]
+    ],
+    [
+      "The Retired Barrister of Repute",
+      [
+        " retired",
+        " barrister",
+        " of",
+        " repute"
+      ]
+    ],
+    [
+      "The Elder Sister",
+      [
+        " elder",
+        " sister"
+      ]
+    ],
+    [
+      "The Eccentric Inventor",
+      [
+        " eccentric",
+        " inventor"
+      ]
+    ],
+    [
+      "The Nurse",
+      [
+        " nurse"
+      ]
+    ],
+    [
+      "The Watchmaker",
+      [
+        " watchmaker"
+      ]
+    ],
+    [
+      "The Fog Navigator",
+      [
+        " fog",
+        " navigator"
+      ]
+    ],
+    [
+      "Fiery Repressed Governess",
+      [
+        " fiery",
+        " repressed",
+        " governess"
+      ]
+    ],
+    [
+      "Calculating Debutante",
+      [
+        " calculating",
+        " debutante"
+      ]
+    ],
+    [
+      "Breaking Rational Detective",
+      [
+        " breaking",
+        " rational",
+        " detective"
+      ]
+    ],
+    [
+      "The Street Urchin/Sweep",
+      [
+        " street",
+        " urchin",
+        "/",
+        "s",
+        "we",
+        "ep"
+      ]
+    ],
+    [
+      "The Taxidermist",
+      [
+        " taxidermist"
+      ]
+    ],
+    [
+      "The Invalid Poet",
+      [
+        " invalid",
+        " poet"
+      ]
+    ],
+    [
+      "The Barrister of Lost Causes",
+      [
+        " barrister",
+        " of",
+        " lost",
+        " causes"
+      ]
+    ],
+    [
+      "The Asylum Apothecary",
+      [
+        " asylum",
+        " apothecary"
+      ]
+    ],
+    [
+      "The Constable",
+      [
+        " constable"
+      ]
+    ],
+    [
+      "The Shopgirl",
+      [
+        " shopgirl"
+      ]
+    ],
+    [
+      "The Widow in Half-Mourning",
+      [
+        " widow",
+        " in",
+        " half",
+        "-",
+        " mourning"
+      ]
+    ],
+    [
+      "The Lighthouse Keeper",
+      [
+        " lighthouse",
+        " keeper"
+      ]
+    ],
+    [
+      "The Street Preacher",
+      [
+        " street",
+        " preacher"
+      ]
+    ],
+    [
+      "Hyper-Logical Detective",
+      [
+        " hy",
+        "per",
+        "-",
+        " logical",
+        " detective"
+      ]
+    ],
+    [
+      "The Street Urchin",
+      [
+        " street",
+        " urchin"
+      ]
+    ],
+    [
+      "The Colonial Returnee",
+      [
+        " colonial",
+        " ret",
+        "urne",
+        "e"
+      ]
+    ],
+    [
+      "The Cook",
+      [
+        " cook"
+      ]
+    ],
+    [
+      "The Mistress Kept in Secret",
+      [
+        " mistress",
+        " kept",
+        " in",
+        " secret"
+      ]
+    ],
+    [
+      "The Cab Driver",
+      [
+        " cab",
+        " driver"
+      ]
+    ],
+    [
+      "The Fraudulent Medium",
+      [
+        " fraudulent",
+        " medium"
+      ]
+    ],
+    [
+      "The Butler",
+      [
+        " butler"
+      ]
+    ],
+    [
+      "The Retired Prizefighter",
+      [
+        " retired",
+        " prizefighter"
+      ]
+    ],
+    [
+      "The Railway Inspector",
+      [
+        " railway",
+        " inspector"
+      ]
+    ],
+    [
+      "The Mapmaker/Surveyor",
+      [
+        " map",
+        "maker",
+        "/",
+        "s",
+        "ur",
+        "vey",
+        "or"
+      ]
+    ],
+    [
+      "The Fallen Clergyman",
+      [
+        " fallen",
+        " clergyman"
+      ]
+    ],
+    [
+      "The Neurotic Gentleman",
+      [
+        " neurotic",
+        " gentleman"
+      ]
+    ],
+    [
+      "Supernatural-War Soldier",
+      [
+        " supernatural",
+        "-",
+        " war",
+        " soldier"
+      ]
+    ],
+    [
+      "The Lamplighter",
+      [
+        " lamplighter"
+      ]
+    ],
+    [
+      "The Etiquette Tutor",
+      [
+        " etiquette",
+        " tutor"
+      ]
+    ],
+    [
+      "The Gentleman Natural Philosopher",
+      [
+        " gentleman",
+        " natural",
+        " philosopher"
+      ]
+    ],
+    [
+      "The Governess-to-Adults",
+      [
+        " governess",
+        "-",
+        " to",
+        "-",
+        " adults"
+      ]
+    ],
+    [
+      "The Junior Solicitor",
+      [
+        " junior",
+        " solicitor"
+      ]
+    ],
+    [
+      "The Undertaker",
+      [
+        " undertaker"
+      ]
+    ],
+    [
+      "The Doctor of Science",
+      [
+        " doctor",
+        " of",
+        " science"
+      ]
+    ],
+    [
+      "The Dissolute Aristocrat",
+      [
+        " dissolute",
+        " aristocrat"
+      ]
+    ],
+    [
+      "The Gentleman Impostor",
+      [
+        " gentleman",
+        " impostor"
+      ]
+    ],
+    [
+      "The Workhouse Matron",
+      [
+        " workhouse",
+        " matron"
+      ]
+    ],
+    [
+      "Reality-Painting Artist",
+      [
+        " reality",
+        "-",
+        " painting",
+        " artist"
+      ]
+    ],
+    [
+      "The Governing Schoolmistress",
+      [
+        " governing",
+        " schoolmistress"
+      ]
+    ],
+    [
+      "Private Museum Keeper",
+      [
+        " private",
+        " museum",
+        " keeper"
+      ]
+    ],
+    [
+      "The Aging Beauty",
+      [
+        " aging",
+        " beauty"
+      ]
+    ],
+    [
+      "Undead Resurrection Man",
+      [
+        " undead",
+        " resurrection",
+        " man"
+      ]
+    ],
+    [
+      "The Ambitious Clerk",
+      [
+        " ambitious",
+        " clerk"
+      ]
+    ],
+    [
+      "The Solicitor",
+      [
+        " solicitor"
+      ]
+    ],
+    [
+      "The Society Chaperone",
+      [
+        " society",
+        " chaperone"
+      ]
+    ],
+    [
+      "Colonial-War Soldier",
+      [
+        " colonial",
+        "-",
+        " war",
+        " soldier"
+      ]
+    ]
+  ],
+  "Resolution": [
+    [
+      "The Sacrifice Accepted",
+      [
+        " sacrifice",
+        " accepted"
+      ]
+    ],
+    [
+      "Moral/Fable",
+      [
+        " moral",
+        "/",
+        "f",
+        "able"
+      ]
+    ],
+    [
+      "Rational Explanation",
+      [
+        " rational",
+        " explanation"
+      ]
+    ],
+    [
+      "The \"Lady or the Tiger\"",
+      [
+        " \"",
+        "l",
+        "ady",
+        " or",
+        " the",
+        " tiger",
+        "\""
+      ]
+    ],
+    [
+      "Rational/Detective",
+      [
+        " rational",
+        "/",
+        "d",
+        "et",
+        "ect",
+        "ive"
+      ]
+    ],
+    [
+      "Scientific/Steampunk",
+      [
+        " scientific",
+        "/",
+        "ste",
+        "amp",
+        "unk"
+      ]
+    ],
+    [
+      "The Shared Burden",
+      [
+        " shared",
+        " burden"
+      ]
+    ],
+    [
+      "Ambiguous/Psychological",
+      [
+        " ambiguous",
+        "/",
+        "ps",
+        "y",
+        "chol",
+        "ogical"
+      ]
+    ],
+    [
+      "Everything-Lost Tragic Irony",
+      [
+        " everything",
+        "-",
+        " lost",
+        " tragic",
+        " irony"
+      ]
+    ],
+    [
+      "Romantic Triumph",
+      [
+        " romantic",
+        " triumph"
+      ]
+    ],
+    [
+      "Comic Surface, Dark Core",
+      [
+        " comic",
+        " surface",
+        ",",
+        " dark",
+        " core"
+      ]
+    ],
+    [
+      "Untouchable Tragic Irony",
+      [
+        " untouchable",
+        " tragic",
+        " irony"
+      ]
+    ],
+    [
+      "The Hollow Victory",
+      [
+        " hollow",
+        " victory"
+      ]
+    ],
+    [
+      "Transference",
+      [
+        " transference"
+      ]
+    ],
+    [
+      "Scarred Romantic Triumph",
+      [
+        " scarred",
+        " romantic",
+        " triumph"
+      ]
+    ],
+    [
+      "True Supernatural",
+      [
+        " true",
+        " supernatural"
+      ]
+    ],
+    [
+      "True Magic",
+      [
+        " true",
+        " magic"
+      ]
+    ],
+    [
+      "The Memory Wiped",
+      [
+        " memory",
+        " wiped"
+      ]
+    ],
+    [
+      "Nihilistic/Horror",
+      [
+        " nihil",
+        "istic",
+        "/",
+        "hor",
+        "r",
+        "or"
+      ]
+    ],
+    [
+      "Assimilation",
+      [
+        " assimilation"
+      ]
+    ],
+    [
+      "The Transformation",
+      [
+        " transformation"
+      ]
+    ],
+    [
+      "The Loop",
+      [
+        " loop"
+      ]
+    ],
+    [
+      "The Bittersweet Bargain",
+      [
+        " bittersweet",
+        " bargain"
+      ]
+    ],
+    [
+      "The Cold Reality",
+      [
+        " cold",
+        " reality"
+      ]
+    ],
+    [
+      "Sacramental/Mystical",
+      [
+        " sacramental",
+        "/",
+        "my",
+        "st",
+        "ical"
+      ]
+    ],
+    [
+      "Social Satire",
+      [
+        " social",
+        " satire"
+      ]
+    ]
+  ],
+  "Setting": [
+    [
+      "A Domestic Interior",
+      [
+        " a",
+        " domestic",
+        " interior"
+      ]
+    ],
+    [
+      "The Walled Rose Arbor",
+      [
+        " walled",
+        " rose",
+        " arbor"
+      ]
+    ],
+    [
+      "The Observatory of Fading Stars",
+      [
+        " observatory",
+        " of",
+        " fading",
+        " stars"
+      ]
+    ],
+    [
+      "A Bank",
+      [
+        " a",
+        " bank"
+      ]
+    ],
+    [
+      "The Country Fair",
+      [
+        " country",
+        " fair"
+      ]
+    ],
+    [
+      "The Secluded Cliff Path",
+      [
+        " secluded",
+        " cliff",
+        " path"
+      ]
+    ],
+    [
+      "The Library of Lost Things",
+      [
+        " library",
+        " of",
+        " lost",
+        " things"
+      ]
+    ],
+    [
+      "Greenhouse/Orangery",
+      [
+        " greenhouse",
+        "/",
+        "or",
+        "an",
+        "ger",
+        "y"
+      ]
+    ],
+    [
+      "The Pawnbroker's Vault",
+      [
+        " pawnbroker’s",
+        " vault"
+      ]
+    ],
+    [
+      "The East End Rookery (Slums)",
+      [
+        " east",
+        " end",
+        " rookery",
+        " (",
+        "s",
+        "l",
+        "ums",
+        ")"
+      ]
+    ],
+    [
+      "The Backstage of a Theater",
+      [
+        " backstage",
+        " of",
+        " a",
+        " theater"
+      ]
+    ],
+    [
+      "The Conservatory at Midnight",
+      [
+        " conservatory",
+        " at",
+        " midnight"
+      ]
+    ],
+    [
+      "The Penny Arcade of Prophecies",
+      [
+        " penny",
+        " arcade",
+        " of",
+        " prophecies"
+      ]
+    ],
+    [
+      "The Telegraph Office in Rain",
+      [
+        " telegraph",
+        " office",
+        " in",
+        " rain"
+      ]
+    ],
+    [
+      "The First Class Train Compartment",
+      [
+        " first",
+        " class",
+        " train",
+        " compartment"
+      ]
+    ],
+    [
+      "The Frozen River Thames",
+      [
+        " frozen",
+        " river",
+        " th",
+        "am",
+        "es"
+      ]
+    ],
+    [
+      "The Abandoned Chapel",
+      [
+        " abandoned",
+        " chapel"
+      ]
+    ],
+    [
+      "The Dressmaker’s Fitting Room",
+      [
+        " dressmaker’s",
+        " fitting",
+        " room"
+      ]
+    ],
+    [
+      "The Music Hall",
+      [
+        " music",
+        " hall"
+      ]
+    ],
+    [
+      "Curiosity Shop",
+      [
+        " curiosity",
+        " shop"
+      ]
+    ],
+    [
+      "The Orchard in Late Autumn",
+      [
+        " orchard",
+        " in",
+        " late",
+        " autumn"
+      ]
+    ],
+    [
+      "Toxic Greenhouse/Orangery",
+      [
+        " toxic",
+        " greenhouse",
+        "/",
+        "or",
+        "an",
+        "ger",
+        "y"
+      ]
+    ],
+    [
+      "The River Embankment in Fog",
+      [
+        " river",
+        " embankment",
+        " in",
+        " fog"
+      ]
+    ],
+    [
+      "The Walled Garden",
+      [
+        " walled",
+        " garden"
+      ]
+    ],
+    [
+      "A Court of Law",
+      [
+        " a",
+        " court",
+        " of",
+        " law"
+      ]
+    ],
+    [
+      "Clock Tower",
+      [
+        " clock",
+        " tower"
+      ]
+    ],
+    [
+      "The Governess's Sitting Room",
+      [
+        " governess’s",
+        " sitting",
+        " room"
+      ]
+    ],
+    [
+      "The Orphanage Dormitory",
+      [
+        " orphanage",
+        " dormitory"
+      ]
+    ],
+    [
+      "The Moonlit Garden Terrace",
+      [
+        " moonlit",
+        " garden",
+        " terrace"
+      ]
+    ],
+    [
+      "The Clockmaker's Workshop",
+      [
+        " clockmaker’s",
+        " workshop"
+      ]
+    ],
+    [
+      "The Museum at Night",
+      [
+        " museum",
+        " at",
+        " night"
+      ]
+    ],
+    [
+      "The Grand Ballroom",
+      [
+        " grand",
+        " ballroom"
+      ]
+    ],
+    [
+      "The Provincial Courtroom",
+      [
+        " provincial",
+        " courtroom"
+      ]
+    ],
+    [
+      "The Rooftops at Midnight",
+      [
+        " rooftops",
+        " at",
+        " midnight"
+      ]
+    ],
+    [
+      "The Train That Never Stops",
+      [
+        " train",
+        " that",
+        " never",
+        " stops"
+      ]
+    ],
+    [
+      "Returning-Heirloom Pawnshop",
+      [
+        " returning",
+        "-",
+        " heirloom",
+        " pawnshop"
+      ]
+    ],
+    [
+      "The Moving Ship",
+      [
+        " moving",
+        " ship"
+      ]
+    ],
+    [
+      "The Garden of Stone Statues",
+      [
+        " garden",
+        " of",
+        " stone",
+        " statues"
+      ]
+    ],
+    [
+      "A Synagogue",
+      [
+        " a",
+        " synagogue"
+      ]
+    ],
+    [
+      "A Shipyard",
+      [
+        " a",
+        " shipyard"
+      ]
+    ],
+    [
+      "Endless Curiosity Shop",
+      [
+        " endless",
+        " curiosity",
+        " shop"
+      ]
+    ],
+    [
+      "The Forgotten Asylum",
+      [
+        " forgotten",
+        " asylum"
+      ]
+    ],
+    [
+      "The Garden Maze Pavilion",
+      [
+        " garden",
+        " maze",
+        " pavilion"
+      ]
+    ],
+    [
+      "The Smuggler’s Sea Cave",
+      [
+        " smuggler’s",
+        " sea",
+        " cave"
+      ]
+    ],
+    [
+      "Closing-Time Public Gardens",
+      [
+        " closing",
+        "-",
+        " time",
+        " public",
+        " gardens"
+      ]
+    ],
+    [
+      "The Séance Parlour",
+      [
+        " séance",
+        " parlour"
+      ]
+    ],
+    [
+      "Ruined Church Confessional",
+      [
+        " ruined",
+        " church",
+        " confessional"
+      ]
+    ],
+    [
+      "The Attic Nursery",
+      [
+        " attic",
+        " nursery"
+      ]
+    ],
+    [
+      "The Insane Asylum",
+      [
+        " ins",
+        "ane",
+        " asylum"
+      ]
+    ],
+    [
+      "Haunted Opera House",
+      [
+        " haunted",
+        " opera",
+        " house"
+      ]
+    ],
+    [
+      "A Pub",
+      [
+        " a",
+        " pub"
+      ]
+    ],
+    [
+      "The Sunken Ballroom",
+      [
+        " sunken",
+        " ballroom"
+      ]
+    ],
+    [
+      "The Laboratory",
+      [
+        " laboratory"
+      ]
+    ],
+    [
+      "The Industrial Mill",
+      [
+        " industrial",
+        " mill"
+      ]
+    ],
+    [
+      "Shifting Hedge Maze",
+      [
+        " shifting",
+        " hedge",
+        " maze"
+      ]
+    ],
+    [
+      "The Boarding School Dormitory",
+      [
+        " boarding",
+        " school",
+        " dormitory"
+      ]
+    ],
+    [
+      "The Seaside Pier in Winter",
+      [
+        " seaside",
+        " pier",
+        " in",
+        " winter"
+      ]
+    ],
+    [
+      "The Naturalist's Study",
+      [
+        " natural",
+        "ist’s",
+        " study"
+      ]
+    ],
+    [
+      "The London Pea-Souper Fog",
+      [
+        " l",
+        "ond",
+        "on",
+        " pea",
+        "-",
+        " souper",
+        " fog"
+      ]
+    ],
+    [
+      "The Gaslamp Alley",
+      [
+        " gaslamp",
+        " alley"
+      ]
+    ],
+    [
+      "The Underground Station",
+      [
+        " underground",
+        " station"
+      ]
+    ],
+    [
+      "Silent Lake Boathouse",
+      [
+        " silent",
+        " lake",
+        " boathouse"
+      ]
+    ],
+    [
+      "A Boarding House",
+      [
+        " a",
+        " boarding",
+        " house"
+      ]
+    ],
+    [
+      "The Fogbound Toll Bridge",
+      [
+        " fog",
+        "bound",
+        " toll",
+        " bridge"
+      ]
+    ],
+    [
+      "The Silver-Gelatin Studio",
+      [
+        " silver",
+        "-",
+        " gelatin",
+        " studio"
+      ]
+    ],
+    [
+      "The Opium Den",
+      [
+        " opium",
+        " den"
+      ]
+    ],
+    [
+      "The Prison Debtors’ Wing",
+      [
+        " prison",
+        " debtors",
+        "’",
+        " wing"
+      ]
+    ],
+    [
+      "The Gin Palace",
+      [
+        " gin",
+        " palace"
+      ]
+    ],
+    [
+      "The Parlor of Perpetual Winter",
+      [
+        " parlor",
+        " of",
+        " perpetual",
+        " winter"
+      ]
+    ],
+    [
+      "The Graveyard/Crypt",
+      [
+        " graveyard",
+        "/",
+        "c",
+        "ry",
+        "pt"
+      ]
+    ],
+    [
+      "A Restaurant",
+      [
+        " a",
+        " restaurant"
+      ]
+    ],
+    [
+      "The Locked Winter Conservatory",
+      [
+        " locked",
+        " winter",
+        " conservatory"
+      ]
+    ],
+    [
+      "The Fever Hospital Isolation Ward",
+      [
+        " fever",
+        " hospital",
+        " isolation",
+        " ward"
+      ]
+    ],
+    [
+      "The Séance Parlor",
+      [
+        " séance",
+        " parlor"
+      ]
+    ],
+    [
+      "The Flooded Cathedral",
+      [
+        " flooded",
+        " cathedral"
+      ]
+    ],
+    [
+      "The Boarding House",
+      [
+        " boarding",
+        " house"
+      ]
+    ],
+    [
+      "The Moors/Marshland",
+      [
+        " moors",
+        "/",
+        "marsh",
+        "land"
+      ]
+    ],
+    [
+      "The Candlelit Chapel Crypt",
+      [
+        " candlelit",
+        " chapel",
+        " crypt"
+      ]
+    ],
+    [
+      "The Lamplighter’s Alley",
+      [
+        " lamplighter’s",
+        " alley"
+      ]
+    ],
+    [
+      "A Music Hall / Theatre",
+      [
+        " a",
+        " music",
+        " hall",
+        " ",
+        "/",
+        " theatre"
+      ]
+    ],
+    [
+      "Living Mirror Maze",
+      [
+        " living",
+        " mirror",
+        " maze"
+      ]
+    ],
+    [
+      "The Fog Garden",
+      [
+        " fog",
+        " garden"
+      ]
+    ],
+    [
+      "The Menagerie of Mechanical Birds",
+      [
+        " menagerie",
+        " of",
+        " mechanical",
+        " birds"
+      ]
+    ],
+    [
+      "The Abbey Ruins in Moonlight",
+      [
+        " abbey",
+        " ruins",
+        " in",
+        " moonlight"
+      ]
+    ],
+    [
+      "The Orchard Gate at Twilight",
+      [
+        " orchard",
+        " gate",
+        " at",
+        " twilight"
+      ]
+    ],
+    [
+      "The Bridge Between Worlds",
+      [
+        " bridge",
+        " between",
+        " worlds"
+      ]
+    ],
+    [
+      "The Isolated Country Manor",
+      [
+        " isolated",
+        " country",
+        " manor"
+      ]
+    ],
+    [
+      "Backward-Time Clock Tower",
+      [
+        " backward",
+        "-",
+        " time",
+        " clock",
+        " tower"
+      ]
+    ],
+    [
+      "A Church",
+      [
+        " a",
+        " church"
+      ]
+    ],
+    [
+      "The Apothecary’s Shop",
+      [
+        " apothecary’s",
+        " shop"
+      ]
+    ],
+    [
+      "The Tollkeeper’s Cottage",
+      [
+        " tollkeeper’s",
+        " cottage"
+      ]
+    ],
+    [
+      "The Ship-Breaker's Yard",
+      [
+        " ship",
+        "-",
+        " break",
+        "er’s",
+        " yard"
+      ]
+    ],
+    [
+      "A University",
+      [
+        " a",
+        " university"
+      ]
+    ],
+    [
+      "The Construction Site",
+      [
+        " construction",
+        " site"
+      ]
+    ],
+    [
+      "The Riverboat Casino",
+      [
+        " riverboat",
+        " casino"
+      ]
+    ],
+    [
+      "The Hospital Night Ward",
+      [
+        " hospital",
+        " night",
+        " ward"
+      ]
+    ],
+    [
+      "Hedge Maze",
+      [
+        " hedge",
+        " maze"
+      ]
+    ],
+    [
+      "The Sewers/Underground",
+      [
+        " sewers",
+        "/",
+        "u",
+        "nder",
+        "gr",
+        "ound"
+      ]
+    ],
+    [
+      "Stormbound Village Inn",
+      [
+        " stor",
+        "mb",
+        "ound",
+        " village",
+        " inn"
+      ]
+    ],
+    [
+      "The Anatomy Theater",
+      [
+        " anatomy",
+        " theater"
+      ]
+    ],
+    [
+      "The House of Constant Rain",
+      [
+        " house",
+        " of",
+        " constant",
+        " rain"
+      ]
+    ],
+    [
+      "Silent Lighthouse",
+      [
+        " silent",
+        " lighthouse"
+      ]
+    ],
+    [
+      "Forest Road",
+      [
+        " forest",
+        " road"
+      ]
+    ],
+    [
+      "Edge-of-Town Carnival",
+      [
+        " edge",
+        "-",
+        " of",
+        "-",
+        " town",
+        " carnival"
+      ]
+    ],
+    [
+      "The Charity Bazaar",
+      [
+        " charity",
+        " bazaar"
+      ]
+    ],
+    [
+      "The Wax Museum",
+      [
+        " wax",
+        " museum"
+      ]
+    ]
+  ],
+  "Setting Opulence": [
+    [
+      "High Society Setting",
+      [
+        " high",
+        " society",
+        " setting"
+      ]
+    ],
+    [
+      "Humble Laboring Setting",
+      [
+        " humble",
+        " laboring",
+        " setting"
+      ]
+    ],
+    [
+      "Respectable Household Setting",
+      [
+        " respectable",
+        " household",
+        " setting"
+      ]
+    ]
+  ],
+  "Social Rank Dynamics": [
+    [
+      "Inevitable Scandal",
+      [
+        " inevitable",
+        " scandal"
+      ]
+    ],
+    [
+      "The Open Secret",
+      [
+        " open",
+        " secret"
+      ]
+    ],
+    [
+      "Tolerated Intimacy",
+      [
+        " tolerated",
+        " intimacy"
+      ]
+    ],
+    [
+      "Rigid Social Order",
+      [
+        " rigid",
+        " social",
+        " order"
+      ]
+    ],
+    [
+      "Strict Propriety",
+      [
+        " strict",
+        " propriety"
+      ]
+    ],
+    [
+      "Transgressive Union",
+      [
+        " transg",
+        "ressive",
+        " union"
+      ]
+    ]
+  ],
+  "Stakes of Love": [
+    [
+      "Family/Social Sacrifice Love",
+      [
+        " family",
+        "/",
+        "s",
+        "oci",
+        "al",
+        " sacrifice",
+        " love"
+      ]
+    ],
+    [
+      "Financial Sacrifice Love",
+      [
+        " financial",
+        " sacrifice",
+        " love"
+      ]
+    ]
+  ],
+  "Supernatural Alignment": [
+    [
+      "Benign Supernatural Power",
+      [
+        " benign",
+        " supernatural",
+        " power"
+      ]
+    ],
+    [
+      "Malign Supernatural Power",
+      [
+        " malign",
+        " supernatural",
+        " power"
+      ]
+    ]
+  ],
+  "Tether": [
+    [
+      "Shared Dreamers",
+      [
+        " shared",
+        " dreamers"
+      ]
+    ],
+    [
+      "The Mourning Ribbon",
+      [
+        " mourning",
+        " ribbon"
+      ]
+    ],
+    [
+      "The Life Debt",
+      [
+        " life",
+        " debt"
+      ]
+    ],
+    [
+      "The Shared Haunting",
+      [
+        " shared",
+        " haunting"
+      ]
+    ],
+    [
+      "The Reincarnated",
+      [
+        " reincarn",
+        "ated"
+      ]
+    ],
+    [
+      "Mirror-World Reflection",
+      [
+        " mirror",
+        "-",
+        " world",
+        " reflection"
+      ]
+    ],
+    [
+      "Rivals for the Artifact",
+      [
+        " rivals",
+        " for",
+        " the",
+        " artifact"
+      ]
+    ],
+    [
+      "The Creator and the Creation",
+      [
+        " creator",
+        " and",
+        " the",
+        " creation"
+      ]
+    ],
+    [
+      "The Fortune Misread",
+      [
+        " fortune",
+        " misread"
+      ]
+    ],
+    [
+      "The Siren's Call",
+      [
+        " siren’s",
+        " call"
+      ]
+    ],
+    [
+      "The Two Halves",
+      [
+        " two",
+        " halves"
+      ]
+    ],
+    [
+      "Predator and Prey",
+      [
+        " predator",
+        " and",
+        " prey"
+      ]
+    ],
+    [
+      "Chrono-Crossed",
+      [
+        " chrono",
+        "-",
+        " crossed"
+      ]
+    ],
+    [
+      "The Thief of Years",
+      [
+        " thief",
+        " of",
+        " years"
+      ]
+    ],
+    [
+      "The Ghost and the Medium",
+      [
+        " ghost",
+        " and",
+        " the",
+        " medium"
+      ]
+    ],
+    [
+      "The Curse of Silence",
+      [
+        " curse",
+        " of",
+        " silence"
+      ]
+    ],
+    [
+      "The Blind Devotion",
+      [
+        " blind",
+        " devotion"
+      ]
+    ],
+    [
+      "The Clock-Struck Lovers",
+      [
+        " clock",
+        "-",
+        " struck",
+        " lovers"
+      ]
+    ],
+    [
+      "The Memory Swap",
+      [
+        " memory",
+        " swap"
+      ]
+    ],
+    [
+      "The Veil Between Rooms",
+      [
+        " veil",
+        " between",
+        " rooms"
+      ]
+    ],
+    [
+      "The Poisoned Pair",
+      [
+        " poisoned",
+        " pair"
+      ]
+    ],
+    [
+      "The Arranged Marriage of Convenience",
+      [
+        " arranged",
+        " marriage",
+        " of",
+        " convenience"
+      ]
+    ],
+    [
+      "The Chaperone’s Chain",
+      [
+        " chaperone’s",
+        " chain"
+      ]
+    ],
+    [
+      "The Master and Servant",
+      [
+        " master",
+        " and",
+        " servant"
+      ]
+    ],
+    [
+      "The Day-Bound and the Night-Cursed",
+      [
+        " day",
+        "-",
+        " bound",
+        " and",
+        " the",
+        " night",
+        "-",
+        " cursed"
+      ]
+    ],
+    [
+      "The Empath and the Stoic",
+      [
+        " emp",
+        "ath",
+        " and",
+        " the",
+        " stoic"
+      ]
+    ],
+    [
+      "The Buried Promise",
+      [
+        " buried",
+        " promise"
+      ]
+    ],
+    [
+      "The Fever Sweethearts",
+      [
+        " fever",
+        " sweetheart",
+        "s"
+      ]
+    ],
+    [
+      "The Symbiotic Sickness",
+      [
+        " symbiotic",
+        " sickness"
+      ]
+    ],
+    [
+      "The Unseen Suitor",
+      [
+        " unseen",
+        " suitor"
+      ]
+    ],
+    [
+      "The Mourner and the Returned",
+      [
+        " mourner",
+        " and",
+        " the",
+        " returned"
+      ]
+    ],
+    [
+      "The Cartographer's Compass",
+      [
+        " cartographer",
+        "’s",
+        " compass"
+      ]
+    ],
+    [
+      "The Phantom Passenger",
+      [
+        " phantom",
+        " passenger"
+      ]
+    ],
+    [
+      "Fading Ghost Muse",
+      [
+        " fading",
+        " ghost",
+        " muse"
+      ]
+    ],
+    [
+      "The Severed Shadow",
+      [
+        " severed",
+        " shadow"
+      ]
+    ],
+    [
+      "The Echo Chamber",
+      [
+        " echo",
+        " chamber"
+      ]
+    ],
+    [
+      "The Heart in Escrow",
+      [
+        " heart",
+        " in",
+        " esc",
+        "row"
+      ]
+    ],
+    [
+      "The Tidal Beloved",
+      [
+        " tidal",
+        " beloved"
+      ]
+    ],
+    [
+      "The Chronometer's Debt",
+      [
+        " chronomet",
+        "er’s",
+        " debt"
+      ]
+    ],
+    [
+      "The Velvet Blindfold",
+      [
+        " velvet",
+        " blindfold"
+      ]
+    ],
+    [
+      "The Siren's Lullaby",
+      [
+        " siren’s",
+        " lullaby"
+      ]
+    ],
+    [
+      "The Venom and the Vial",
+      [
+        " venom",
+        " and",
+        " the",
+        " vial"
+      ]
+    ],
+    [
+      "Masked Vow",
+      [
+        " masked",
+        " vow"
+      ]
+    ],
+    [
+      "The Tide-Bound",
+      [
+        " tide",
+        "-",
+        " bound"
+      ]
+    ],
+    [
+      "The Phantom Caress",
+      [
+        " phantom",
+        " caress"
+      ]
+    ]
+  ]
+}

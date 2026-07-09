@@ -1,0 +1,3343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini LLM JS by Daniel Chermetz</title>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="./inference/inference_webgpu.js"></script>
+    <script src="./inference/inference_helper_webgpu.js"></script>
+    <script src="./inference/inference_bpe.js"></script>
+    <script src="./inference/inference_bpe_tokenize_text.js"></script>
+    <script src="./instruct/instruct_dropdowns.js"></script>
+
+    <style>
+        /* --- Basic Setup & Typography --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --success-dark: #059669;
+            --bg-color: #f1f5f9;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg-color: #ffffff;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+        }
+
+        body {
+            font-family: var(--font-family);
+            /* Fallback gradient background (also used while image loads) */
+            background: var(--bg-gradient);
+            /* Background image loaded after other resources */
+            background-image: url('victorianBackground.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: var(--text-color);
+            margin: 0;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        /* --- Main Layout Container --- */
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background-color: var(--card-bg-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-xl);
+            padding: 35px 45px;
+            box-sizing: border-box;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 35px;
+            font-weight: 700;
+            font-size: 2.5em;
+            letter-spacing: -0.02em;
+        }
+
+        /* --- Section Styling --- */
+        .config-section, .story-section, .mode-selection-section, .inference-section {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .inference-section {
+            border-bottom: none;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            letter-spacing: -0.01em;
+        }
+
+        /* --- Mode Selector (Top Bar) --- */
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+        .mode-selector label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: color 0.2s ease;
+        }
+        .mode-selector label:hover {
+            color: var(--primary-color);
+        }
+        .mode-selector input[type="radio"] { 
+            margin-right: 8px; 
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+        .context-window-selector { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        #context-window-select { 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            border: 2px solid var(--border-color); 
+            font-size: 1em;
+            font-family: var(--font-family);
+            font-weight: 500;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #context-window-select:hover {
+            border-color: var(--primary-color);
+        }
+        #context-window-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* --- Story Loader --- */
+        .story-section { text-align: center; }
+        #random-story-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-size: 1.25em;
+            font-weight: 600;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow-md);
+            letter-spacing: 0.01em;
+        }
+        #random-story-btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        #random-story-btn:active { 
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+        .manual-story-input { 
+            margin-top: 20px; 
+            color: var(--text-muted); 
+            font-weight: 500;
+        }
+        #story-id-input { 
+            width: 110px; 
+            padding: 10px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        #story-id-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        #load-story-btn { 
+            padding: 10px 18px; 
+            border: 2px solid var(--border-color); 
+            background-color: white; 
+            cursor: pointer; 
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+        #load-story-btn:hover { 
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* --- Write From Scratch Button --- */
+        #write-story-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- NEW: Inference Mode Selection --- */
+        .mode-selection-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .mode-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .mode-btn {
+            padding: 14px 28px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+            background-color: white;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        .mode-btn:hover {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        #percentage-selector {
+            text-align: center;
+            margin-top: 10px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        #percentage-select { 
+            padding: 10px 14px; 
+            font-size: 1em; 
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            font-weight: 500;
+            font-family: var(--font-family);
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 10px;
+        }
+        #percentage-select:hover {
+            border-color: var(--primary-color);
+        }
+        #percentage-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        /* Quick percentage selection buttons */
+        .quick-percentage-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .quick-percentage-btn {
+            padding: 8px 20px;
+            font-size: 0.95em;
+            font-weight: 600;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            background-color: white;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        .quick-percentage-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        .quick-percentage-btn.selected {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* --- Inference Area --- */
+        h3 { 
+            margin-top: 20px; 
+            margin-bottom: 10px; 
+            color: var(--text-color); 
+            font-weight: 600;
+            font-size: 1.1em;
+            letter-spacing: -0.01em;
+        }
+        #story-context-display { 
+            background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+            border: 2px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 20px; 
+            min-height: 100px; 
+            font-style: italic; 
+            color: var(--text-color); 
+            line-height: 1.8; 
+            white-space: pre-wrap;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        #story-context-display.editable { 
+            background-color: #fff; 
+            border: 2px solid var(--primary-color); 
+            cursor: text;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        #prompt-input { 
+            width: 100%; 
+            min-height: 100px; 
+            padding: 15px; 
+            border-radius: 10px; 
+            border: 2px solid var(--border-color); 
+            font-family: var(--font-family); 
+            font-size: 1em; 
+            box-sizing: border-box; 
+            resize: vertical;
+            transition: all 0.2s ease;
+        }
+        #prompt-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        #generate-btn { 
+            background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%);
+            color: white; 
+            padding: 14px 28px; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 1.15em; 
+            font-weight: 600;
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            align-self: flex-end;
+            box-shadow: var(--shadow-md);
+            letter-spacing: 0.01em;
+        }
+        #generate-btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        #generate-btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+        #generate-btn:disabled { 
+            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+            cursor: not-allowed;
+            transform: none;
+        }
+        #output-area { 
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 20px; 
+            min-height: 120px; 
+            white-space: pre-wrap; 
+            line-height: 1.8; 
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            font-size: 0.95em;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+        
+        /* --- Token Interaction Styles --- */
+        .token {
+            cursor: pointer;
+            padding: 2px 0;
+            transition: all 0.2s ease;
+            position: relative;
+            display: inline;
+            border-radius: 3px;
+        }
+        .token:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            padding: 2px 4px;
+        }
+        .token.selected {
+            background-color: rgba(99, 102, 241, 0.2);
+            font-weight: 600;
+        }
+        
+        /* --- Token Tooltip --- */
+        .token-tooltip {
+            position: absolute;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+            min-width: 280px;
+            max-width: 350px;
+            font-family: var(--font-family);
+            animation: tooltipFadeIn 0.2s ease;
+        }
+        
+        @keyframes tooltipFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .token-tooltip-header {
+            font-weight: 600;
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .token-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            margin: 4px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+            border: 1px solid var(--border-color);
+        }
+        
+        .token-option:hover {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            transform: translateX(3px);
+            border-color: var(--primary-color);
+        }
+        
+        .token-value {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            font-size: 0.95em;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .token-probability {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-left: 10px;
+            opacity: 0.7;
+        }
+        
+        .token-option:hover .token-probability {
+            opacity: 1;
+        }
+        
+        .token-rank {
+            background: var(--primary-color);
+            color: white;
+            font-size: 0.7em;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 8px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .token-option:hover .token-rank {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        /* Special styling for actual token option in teacher mode */
+        .actual-token-option:hover .token-probability {
+            color: white !important;
+            opacity: 1;
+        }
+        
+        /* --- Token Probability Display --- */
+        .token-with-prob {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 2px;
+        }
+        
+        .token-prob-label {
+            font-size: 0.7em;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-family: var(--font-mono);
+            margin-bottom: 2px;
+            opacity: 0.8;
+            line-height: 1;
+        }
+        
+        .show-probabilities-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .show-probabilities-control input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+        
+        .show-probabilities-control label {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        /* --- Context Options --- */
+        .context-options {
+            background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px 18px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: var(--text-muted);
+            box-shadow: var(--shadow-sm);
+        }
+        .context-options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .context-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .context-options label:hover {
+            color: var(--primary-color);
+        }
+        .context-options input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+        .modify-selection-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-left: 12px;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .modify-selection-link:hover {
+            color: var(--primary-dark);
+            border-bottom-color: var(--primary-dark);
+        }
+        .current-selection {
+            font-weight: 600;
+            color: var(--text-color);
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #reset-flow-btn {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        #reset-flow-btn:hover {
+            color: var(--primary-color);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        /* --- Utility Classes --- */
+        .hidden { display: none !important; }
+        .loader { 
+            display: inline-block; 
+            border: 4px solid rgba(99, 102, 241, 0.1); 
+            border-top: 4px solid var(--primary-color); 
+            border-radius: 50%; 
+            width: 22px; 
+            height: 22px; 
+            animation: spin 0.8s linear infinite; 
+            margin-left: 12px; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        
+        /* --- Model Loading Progress Bar --- */
+        .model-loading-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: var(--shadow-xl);
+            border: 2px solid var(--primary-color);
+            z-index: 10000;
+            min-width: 280px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .model-loading-indicator.loaded {
+            animation: slideOut 0.5s ease forwards;
+        }
+        
+        @keyframes slideOut {
+            to {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+        }
+        
+        .model-loading-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .model-loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        .model-loading-title {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95em;
+        }
+        
+        .model-loading-status {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-family: var(--font-mono);
+        }
+        
+        .model-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .model-progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .model-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .model-success-icon {
+            color: var(--success-color);
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Model Loading Indicator -->
+    <div id="model-loading-indicator" class="model-loading-indicator hidden">
+        <div class="model-loading-header">
+            <div class="model-loading-spinner"></div>
+            <div class="model-loading-title">Loading Model</div>
+        </div>
+        <div class="model-loading-status" id="model-loading-status">Initializing...</div>
+        <div class="model-progress-bar">
+            <div class="model-progress-fill" id="model-progress-fill" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Mini LLM JS</h1>
+        <div style="text-align: center; margin-top: -20px; margin-bottom: 30px; color: var(--text-muted); font-size: 0.9em;">
+            <span style="font-weight: 500;">This LLM was trained by custom CUDA code without relying on any ML libraries (by </span><span style="font-weight: 600; color: var(--primary-color);">Daniel Chermetz</span><span style="font-weight: 500;">)</span>
+        </div>
+
+        <!-- Section 1: Configuration -->
+        <!-- TEMPORARILY HIDDEN: CPU/GPU mode selector -->
+        <div class="config-section hidden" style="display: none !important;">
+            <div class="mode-selector">
+                <label><input type="radio" name="mode" value="gpu" checked> GPU Mode</label>
+                <label><input type="radio" name="mode" value="cpu"> CPU Mode</label>
+                <div class="context-window-selector hidden"><label for="context-window-select">Context:</label><select id="context-window-select"><option value="32">32</option><option value="64">64</option><option value="128">128</option><option value="256" selected>256</option></select></div>
+            </div>
+        </div>
+
+        <!-- Section 2: Story Loading -->
+        <!-- NEW: Prompt-builder dropdowns (Step 1). Populated by instruct_dropdowns.js. -->
+        <div id="instruct-builder-section" class="config-section"></div>
+
+        <!-- LEGACY Step 1 (hidden): random / manual / custom story loading.
+             Kept in the DOM so the existing inference workflow JS keeps working. -->
+        <div id="story-section" class="story-section hidden">
+            <h2>Step 1: Load a Story</h2>
+            <button id="random-story-btn">Select a Random Story</button>
+            <div class="manual-story-input">
+                or enter a story number (0 - 377,000):
+                <input type="number" id="story-id-input" min="0" max="377000">
+                <button id="load-story-btn">Load</button>
+            </div>
+        </div>
+
+        <!-- New: Write Story from Scratch -->
+        <div class="write-story-section hidden" style="margin-top: 25px; text-align: center; font-size: 0.95em; color: var(--text-muted);">
+            <button id="write-story-btn" style="padding: 12px 24px; font-size: 0.95em; font-weight: 600; border: 2px solid var(--border-color); background-color: white; cursor: pointer; border-radius: 10px; transition: all 0.2s ease; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);">Or enter your own story text...</button>
+        </div>
+        
+        <!-- Custom Story Text Input Modal -->
+        <div id="custom-story-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+            <div style="background: white; padding: 30px; border-radius: 16px; max-width: 600px; width: 90%; box-shadow: var(--shadow-xl);">
+                <h2 style="margin-top: 0; text-align: center; color: var(--text-color);">Enter Your Story Text</h2>
+                <textarea id="custom-story-textarea" placeholder="Type or paste your story text here..." style="width: 100%; min-height: 200px; padding: 15px; border-radius: 10px; border: 2px solid var(--border-color); font-family: var(--font-family); font-size: 1em; box-sizing: border-box; resize: vertical;"></textarea>
+                <p id="custom-story-warning" style="color: #ef4444; font-size: 0.9em; margin: 10px 0; display: none;"></p>
+                <p style="color: var(--text-muted); font-size: 0.85em; margin: 10px 0;">Note: Characters not in the vocabulary will be replaced with '~'.</p>
+                <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 20px;">
+                    <button id="custom-story-cancel" style="padding: 12px 24px; font-size: 1em; font-weight: 600; border: 2px solid var(--border-color); background-color: white; cursor: pointer; border-radius: 10px;">Cancel</button>
+                    <button id="custom-story-submit" style="padding: 12px 24px; font-size: 1em; font-weight: 600; border: none; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; cursor: pointer; border-radius: 10px;">Use This Text</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Selector Modal -->
+        <div id="model-selector-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1001;">
+            <div style="background: white; padding: 35px; border-radius: 16px; max-width: 450px; width: 90%; box-shadow: var(--shadow-xl);">
+                <h2 style="margin-top: 0; text-align: center; color: var(--text-color);">Select Model Snapshot</h2>
+                <p style="color: var(--text-muted); font-size: 0.9em; text-align: center; margin-bottom: 10px;">Choose a model checkpoint to load:</p>
+                <p style="color: var(--text-color); font-size: 0.85em; font-weight: 600; text-align: center; margin-bottom: 20px; line-height: 1.4; background: #f0f4f8; padding: 12px; border-radius: 8px;">Model 5 is the latest snapshot, but it's not always or even usually the best. Result quality varies by prompt—with earlier snapshots (1-4) often producing better or more interesting results for specific inputs.</p>
+                <div id="model-options" style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="model-option-btn" data-model="model_11_lr_1e5.bin" style="padding: 14px 20px; font-size: 1em; font-weight: 600; border: 2px solid var(--border-color); background-color: white; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;">Model 1 - lr 1e-5</button>
+                    <button class="model-option-btn" data-model="model_12_lr_4e6.bin" style="padding: 14px 20px; font-size: 1em; font-weight: 600; border: 2px solid var(--border-color); background-color: white; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;">Model 2 - lr 4e-6</button>
+                    <button class="model-option-btn" data-model="model_13_lr_3e6.bin" style="padding: 14px 20px; font-size: 1em; font-weight: 600; border: 2px solid var(--border-color); background-color: white; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;">Model 3 - lr 3e-6</button>
+                    <button class="model-option-btn" data-model="model_14_lr_3e6.bin" style="padding: 14px 20px; font-size: 1em; font-weight: 600; border: 2px solid var(--border-color); background-color: white; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;">Model 4 - lr 3e-6</button>
+                    <button class="model-option-btn" data-model="model_15_lr_3e6.bin" style="padding: 14px 20px; font-size: 1em; font-weight: 600; border: 2px solid var(--border-color); background-color: white; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;">Model 5 - lr 3e-6</button>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.75em; text-align: center; margin-top: 15px; line-height: 1.4; font-style: italic;">Note: The most interesting aspect of this project isn't the result quality, but that these models were trained entirely using custom hand-written JavaScript and browser supported code—no PyTorch or other ML libraries were used. While the UI received AI assistance, the inference engine, BPE tokenization, and training were all hand-written.</p>
+            </div>
+        </div>
+
+        <!-- Section 3: Inference Mode Selection (Initially Hidden) -->
+        <div id="mode-selection-section" class="mode-selection-section hidden">
+            <h2>Step 2: Choose Inference Mode</h2>
+            <div class="mode-selection-area">
+                <div class="mode-buttons">
+                    <button id="teacher-forced-btn" class="mode-btn">Teacher Forced Mode</button>
+                    <button id="free-inference-btn" class="mode-btn">Free Inference Mode</button>
+                </div>
+                <div id="percentage-selector" class="hidden">
+                    <label for="percentage-select">Select % of story context to provide:</label>
+                    <select id="percentage-select">
+                        <option value="">-- Select --</option>
+                    </select>
+                    <div class="quick-percentage-buttons">
+                        <button class="quick-percentage-btn" data-percentage="1">1%</button>
+                        <button class="quick-percentage-btn" data-percentage="2.5">2.5%</button>
+                        <button class="quick-percentage-btn" data-percentage="5">5%</button>
+                        <button class="quick-percentage-btn" data-percentage="7.5">7.5%</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Inference UI (Initially Hidden) -->
+        <div id="inference-section" class="inference-section hidden">
+            <h2>Step 3: Generate</h2>
+            <div id="inference-area">
+                <!-- Context Options (shown only for loaded stories, not "from scratch") -->
+                <div id="context-options" class="context-options hidden">
+                    <div class="context-options-row">
+                        <div>
+                            <span class="current-selection" id="current-selection-text">Teacher Forced Mode</span>
+                            <a class="modify-selection-link" id="modify-selection-link">Modify Selection</a>
+                        </div>
+                        <!-- TEMPORARILY HIDDEN: Edit context checkbox -->
+                        <label class="hidden">
+                            <input type="checkbox" id="edit-context-checkbox">
+                            Allow editing story context
+                        </label>
+                    </div>
+                </div>
+
+                <div id="story-context-panel">
+                    <h3>Story Context: <span id="story-id-display" style="font-size: 0.75em; font-weight: 400; color: var(--text-muted); font-family: var(--font-mono);"></span></h3>
+                    <div id="story-context-display" contenteditable="false">Please load a story to begin...</div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 15px;">
+                    <button id="generate-btn">Generate</button>
+                    <div id="loader" class="loader hidden"></div>
+                </div>
+
+                <h3>Model Output:</h3>
+                <div class="show-probabilities-control">
+                    <input type="checkbox" id="show-probabilities-checkbox">
+                    <label for="show-probabilities-checkbox">Show token probabilities</label>
+                    <span id="show-rank-control" class="hidden" style="margin-left: 20px;">
+                        <input type="checkbox" id="show-rank-checkbox">
+                        <label for="show-rank-checkbox">Show token rank</label>
+                    </span>
+                </div>
+                <div id="output-area">The model's response will appear here.</div>
+
+                <a id="reset-flow-btn">Select a New Story</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    $(document).ready(function() {
+        // --- State Management ---
+        let fullStoryText = '';
+        let fullStoryTokens = []; // Store the full story as token IDs
+        let currentStoryId = null; // Track the currently loaded story ID
+        let currentInferenceConfig = {
+            type: null, // 'teacher-forced' or 'free-inference'
+            percentage: 100
+        };
+        let isFromScratch = false; // Track if user came from "from scratch" path
+        let isCustomText = false; // Track if the current content came from user-entered custom text
+        let isInstructMode = false; // Track if context came from the instruct prompt-builder
+        let generatedTokens = []; // Store tokens with their prediction data
+        let activeTooltip = null; // Track the currently open tooltip
+        let tooltipHideTimeout = null; // Track the hide delay tooltip
+        let isGenerating = false; // Track if generation is in progress
+        let shouldStopGeneration = false; // Flag to stop generation
+        
+        // Free inference state (for token replacement and regeneration)
+        let freeInferenceContextTokens = []; // Original context tokens
+        let freeInferenceNumContextTokens = 0; // Number of context tokens
+        
+        // Teacher mode state (for re-rendering)
+        let teacherModeFirstToken = ''; // The first token that has no prediction
+        
+        // --- Global Data Storage ---
+        globalThis.NetworkMeta = {
+            dimensions: 768,
+            heads: 4,
+            ropeDenomBase: 10000,
+            ffnDim: 3072,
+            // ffnDimMultiplier: 4, // deprecated
+            numTransformers: 16,
+            CONFIG_QK_RMS: false, // Enable per-head RMS normalization of queries/keys before attention
+            CONFIG_QUERY_GATING: false, // Enable Qwen-style query gating of the attention output
+            CONFIG_VOCAB_V2: true, // Load victorianVocab_V2.json instead of victorianVocab.json
+            contextLength: 1024, // Sequence length / context window (drives SEQUENCE_LENGTH)
+            modelFile: 'lr_1e4_bs_5_768_16_4_loss_1_7518.bin', // Weights file (appended to ./model/ and CDN base)
+        };
+        globalThis.SEQUENCE_LENGTH = NetworkMeta.contextLength;
+        globalThis.SHOW_MODEL_SELECTOR = false; // Set to true to show model selection modal on startup
+        globalThis.SHOW_STORY_CONTEXT_PANEL = false; // Set to true to show the original "Story Context" panel (debug). When false, only the model output / generate panel is shown to avoid confusing the original story with the generated one.
+        if (!globalThis.vocab) globalThis.vocab = null;
+        if (!globalThis.tokenizedStories) globalThis.tokenizedStories = {};
+        if (!globalThis.tokenEmbeddings_GLOBAL) globalThis.tokenEmbeddings_GLOBAL = null;
+        if (!globalThis.rmsGamma3_GLOBAL) globalThis.rmsGamma3_GLOBAL = null;
+        if (!globalThis.GLOBAL_WEIGHTS) globalThis.GLOBAL_WEIGHTS = null;
+
+        // The CUDA trainer saves optional tensors (QK-RMS gammas, query-gate weights) under
+        // different names than the inference engine reads. Map save-file names -> inference
+        // property names, only when the tensor is present (optional configs may be off).
+        globalThis.remapOptionalBlockTensors = function(block) {
+            if (!block) return block;
+            const renameMap = {
+                queryRMSGamma: 'rmsGammaQueries',
+                keyRMSGamma: 'rmsGammaKeys',
+                gatedQueryWeights: 'queryGateWeights',
+            };
+            for (const savedName in renameMap) {
+                const expectedName = renameMap[savedName];
+                if (block[savedName] !== undefined && block[expectedName] === undefined) {
+                    block[expectedName] = block[savedName];
+                }
+            }
+            return block;
+        };
+        
+        let modelLoadingComplete = false;
+
+        // --- DOM Element References ---
+        const $configSection = $('.config-section');
+        const $storySection = $('#story-section');
+        const $modeSelectionSection = $('#mode-selection-section');
+        const $inferenceSection = $('#inference-section');
+        
+        const $modeRadios = $('input[name="mode"]');
+        const $contextWindowSelector = $('.context-window-selector');
+        
+        const $randomStoryBtn = $('#random-story-btn');
+        const $storyIdInput = $('#story-id-input');
+        const $loadStoryBtn = $('#load-story-btn');
+
+        const $teacherForcedBtn = $('#teacher-forced-btn');
+        const $freeInferenceBtn = $('#free-inference-btn');
+        const $percentageSelector = $('#percentage-selector');
+        const $percentageSelect = $('#percentage-select');
+
+        const $storyContextDisplay = $('#story-context-display');
+        const $generateBtn = $('#generate-btn');
+        const $outputArea = $('#output-area');
+        const $loader = $('#loader');
+        const $resetFlowBtn = $('#reset-flow-btn');
+
+        // Hide the original "Story Context" panel unless the debug flag is enabled.
+        // The story context text remains in the DOM so generation still reads it correctly.
+        if (!globalThis.SHOW_STORY_CONTEXT_PANEL) {
+            $('#story-context-panel').hide();
+        }
+
+        const $writeStoryBtn = $('#write-story-btn');
+        
+        const $contextOptions = $('#context-options');
+        const $currentSelectionText = $('#current-selection-text');
+        const $modifySelectionLink = $('#modify-selection-link');
+        const $editContextCheckbox = $('#edit-context-checkbox');
+        
+        const $showProbabilitiesCheckbox = $('#show-probabilities-checkbox');
+        const $showRankCheckbox = $('#show-rank-checkbox');
+        const $showRankControl = $('#show-rank-control');
+        
+        const $modelLoadingIndicator = $('#model-loading-indicator');
+        const $modelLoadingStatus = $('#model-loading-status');
+        const $modelProgressFill = $('#model-progress-fill');
+
+        // --- Data Loading Functions ---
+        const MAX_STORY_ID = 369999;
+        const STORIES_PER_FILE = 1000;
+
+        // Load vocabulary
+        async function loadVocab() {
+            if (globalThis.vocab) return globalThis.vocab;
+            
+            try {
+                const response = await fetch(NetworkMeta.CONFIG_VOCAB_V2 ? './model/vocab/victorianVocab_V2.json' : './model/vocab/victorianVocab.json');
+                globalThis.vocab = await response.json();
+                
+                // Check if it's an array or object
+                const isArray = Array.isArray(globalThis.vocab);
+                const length = isArray ? globalThis.vocab.length : Object.keys(globalThis.vocab).length;
+                
+                console.log('Vocabulary loaded:', length, 'tokens', isArray ? '(array)' : '(object)');
+                console.log('Sample entries:', isArray ? globalThis.vocab.slice(0, 5) : Object.entries(globalThis.vocab).slice(0, 5));
+                
+                // Save a reference to tokenVal_GLOBAL
+                globalThis.tokenVal_GLOBAL = globalThis.vocab;
+                
+                // Create token value lookup record and frequency list
+                globalThis.tokenValsRecord = {};
+                for (let i = 0; i < globalThis.tokenVal_GLOBAL.length; i++) {
+                    globalThis.tokenValsRecord[globalThis.tokenVal_GLOBAL[i]] = i;
+                }
+
+                console.log('✓ Token value lookup created');
+                return globalThis.vocab;
+            } catch (error) {
+                console.error('Error loading vocabulary:', error);
+                throw error;
+            }
+        }
+
+        // Load a tokenized stories file (caches in globalThis)
+        async function loadTokenizedStoriesFile(fileNumber) {
+            // Check if already loaded
+            if (globalThis.tokenizedStories[fileNumber]) {
+                console.log(`Using cached stories file ${fileNumber}`);
+                return globalThis.tokenizedStories[fileNumber];
+            }
+            
+            try {
+                const fileName = `tokenizedStories_${String(fileNumber).padStart(4, '0')}.json`;
+                const response = await fetch(`./tokenizedVictorianStories/${fileName}`);
+                const stories = await response.json();
+                
+                // Cache it
+                globalThis.tokenizedStories[fileNumber] = stories;
+                console.log(`Loaded stories file ${fileNumber}: ${stories.length} stories`);
+                return stories;
+            } catch (error) {
+                console.error(`Error loading stories file ${fileNumber}:`, error);
+                throw error;
+            }
+        }
+
+        // Fetch a specific story by ID
+        async function fetchStory(storyId) {
+            console.log(`Fetching story #${storyId}...`);
+            
+            // Ensure vocab is loaded
+            await loadVocab();
+            
+            // Calculate which file and index within file
+            const fileNumber = Math.floor(storyId / STORIES_PER_FILE) + 1;
+            const indexInFile = storyId % STORIES_PER_FILE;
+            
+            console.log(`Story ${storyId} is in file ${fileNumber} at index ${indexInFile}`);
+            
+            // Load the appropriate file
+            const storiesFile = await loadTokenizedStoriesFile(fileNumber);
+            
+            // Get the story (array of token IDs)
+            const storyTokenVals = storiesFile[indexInFile];
+            
+            if (!storyTokenVals) {
+                throw new Error(`Story ${storyId} not found in file ${fileNumber}`);
+            }
+            
+            console.log(`Story ${storyId} has ${storyTokenVals.length} tokens`);
+            
+            // Store the full story tokens
+            fullStoryTokens = storyTokenVals;
+            
+            // Convert token vals to text (vocab is an array)
+            const storyText = storyTokenVals.map(tokenVal => {
+                const tokenIndex = globalThis.vocab.indexOf(tokenVal);
+                if (tokenIndex === -1) {
+                    console.warn(`Unknown token value: ${tokenVal}`);
+                    return `[UNK${tokenVal}]`;
+                }
+                return tokenVal;
+            }).join('');
+            
+            return storyText;
+        }
+        
+        // Load model weights from JSON with progress tracking (legacy)
+        async function loadJSONModelWeights(filename) {
+            console.log(`--- Attempting to load JSON model weights from ${filename}... ---`);
+            
+            // Show loading indicator
+            $modelLoadingIndicator.removeClass('hidden');
+            updateModelLoadingProgress(0, 'Fetching model file...');
+            
+            try {
+                // Fetch the model file
+                const response = await fetch(filename);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch model: ${response.status} ${response.statusText}`);
+                }
+                
+                // Get content length for progress tracking
+                const contentLength = response.headers.get('content-length');
+                const total = contentLength ? parseInt(contentLength, 10) : 0;
+                
+                updateModelLoadingProgress(10, 'Downloading model...');
+                
+                // Read the response body with progress
+                let received = 0;
+                const reader = response.body.getReader();
+                const chunks = [];
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) break;
+                    
+                    chunks.push(value);
+                    received += value.length;
+                    
+                    // Update progress (10% to 70% for download)
+                    if (total > 0) {
+                        const downloadProgress = 10 + (received / total) * 60;
+                        updateModelLoadingProgress(downloadProgress, `Downloading: ${(received / 1024 / 1024).toFixed(1)} MB`);
+                    }
+                }
+                
+                updateModelLoadingProgress(70, 'Parsing JSON...');
+                
+                // Combine chunks into a single Uint8Array
+                const allChunks = new Uint8Array(received);
+                let position = 0;
+                for (const chunk of chunks) {
+                    allChunks.set(chunk, position);
+                    position += chunk.length;
+                }
+                
+                // Convert to string and parse JSON
+                const jsonString = new TextDecoder('utf-8').decode(allChunks);
+                
+                updateModelLoadingProgress(80, 'Parsing model data...');
+                
+                const modelData = JSON.parse(jsonString);
+                
+                updateModelLoadingProgress(85, 'Validating model structure...');
+                
+                // Validate structure
+                if (
+                    !modelData.tokenEmbeddings ||
+                    !modelData.finalRMSNormGamma ||
+                    !modelData.transformerBlocks
+                ) {
+                    throw new Error(`Model file is missing required keys (tokenEmbeddings, finalRMSNormGamma, transformerBlocks)`);
+                }
+                
+                updateModelLoadingProgress(90, 'Loading model into memory...');
+                
+                // Assign to global variables
+                globalThis.tokenEmbeddings_GLOBAL = modelData.tokenEmbeddings;
+                globalThis.rmsGamma3_GLOBAL = modelData.finalRMSNormGamma;
+                globalThis.GLOBAL_WEIGHTS = modelData.transformerBlocks;
+                
+                updateModelLoadingProgress(100, 'Model loaded successfully!');
+                
+                console.log(`--- Successfully loaded weights from ${filename}. ---`);
+                console.log(`Token embeddings shape: [${modelData.tokenEmbeddings.length}, ${modelData.tokenEmbeddings[0]?.length || 0}]`);
+                console.log(`Transformer blocks: ${modelData.transformerBlocks.length}`);
+                
+                modelLoadingComplete = true;
+                
+                // Initialize LM network objects after model is loaded
+                globalThis.lmNetwork = new LmNetwork();
+                await lmNetwork.init();
+                lmNetwork.setupInference(SEQUENCE_LENGTH);
+
+                console.log('✓ LM network objects initialized');
+                
+                // Hide indicator after a short delay
+                setTimeout(() => {
+                    $modelLoadingIndicator.addClass('loaded');
+                    setTimeout(() => {
+                        $modelLoadingIndicator.addClass('hidden');
+                    }, 500);
+                }, 1000);
+                
+                return true;
+                
+            } catch (error) {
+                console.error(`!!! Error loading model from '${filename}':`, error);
+                updateModelLoadingProgress(0, `Error: ${error.message}`);
+                
+                // Change styling to show error
+                $modelLoadingIndicator.css('border-color', '#ef4444');
+                $modelProgressFill.css('background', 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)');
+                
+                return false;
+            }
+        }
+        
+        // Load model weights from binary format with progress tracking
+        async function loadModelWeights(filename) {
+            console.log(`--- Attempting to load binary model weights from ${filename}... ---`);
+            
+            // Show loading indicator
+            $modelLoadingIndicator.removeClass('hidden');
+            updateModelLoadingProgress(0, 'Fetching model file...');
+            
+            try {
+                // Fetch the model file
+                const response = await fetch(filename);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch model: ${response.status} ${response.statusText}`);
+                }
+                
+                // Get content length for progress tracking
+                const contentLength = response.headers.get('content-length');
+                const total = contentLength ? parseInt(contentLength, 10) : 0;
+                
+                updateModelLoadingProgress(10, 'Downloading model...');
+                
+                // Read the response body with progress
+                let received = 0;
+                const reader = response.body.getReader();
+                const chunks = [];
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) break;
+                    
+                    chunks.push(value);
+                    received += value.length;
+                    
+                    // Update progress (10% to 70% for download)
+                    if (total > 0) {
+                        const downloadProgress = 10 + (received / total) * 60;
+                        updateModelLoadingProgress(downloadProgress, `Downloading: ${(received / 1024 / 1024).toFixed(1)} MB`);
+                    }
+                }
+                
+                updateModelLoadingProgress(70, 'Parsing binary data...');
+                
+                // Combine chunks into a single Uint8Array
+                const allChunks = new Uint8Array(received);
+                let position = 0;
+                for (const chunk of chunks) {
+                    allChunks.set(chunk, position);
+                    position += chunk.length;
+                }
+                
+                // Convert to ArrayBuffer for DataView operations
+                const fileBuffer = allChunks.buffer;
+                const dataView = new DataView(fileBuffer);
+                
+                updateModelLoadingProgress(75, 'Reading header...');
+                
+                // Read header
+                const headerLength = dataView.getBigUint64(0, true); // true = little-endian
+                const headerStart = 8;
+                const headerEnd = headerStart + Number(headerLength);
+                
+                if (headerEnd > fileBuffer.byteLength) {
+                    throw new Error('Header length specified in file is larger than the file itself.');
+                }
+                
+                const headerBuffer = allChunks.slice(headerStart, headerEnd);
+                const metadata = JSON.parse(new TextDecoder('utf-8').decode(headerBuffer));
+                
+                updateModelLoadingProgress(80, 'Processing tensors...');
+                
+                // Calculate where the data payload starts, accounting for potential padding
+                const ALIGNMENT = 8;
+                const paddingNeeded = (ALIGNMENT - (headerEnd % ALIGNMENT)) % ALIGNMENT;
+                let dataOffset = headerEnd + paddingNeeded;
+                
+                const readAndReshapeTensor = (tensorMeta) => {
+                    const numElements = tensorMeta.shape.reduce((acc, val) => acc * val, 1);
+                    let bytesPerElement;
+                    
+                    if (tensorMeta.dtype === 'float32') { bytesPerElement = 4; }
+                    else if (tensorMeta.dtype === 'float64') { bytesPerElement = 8; }
+                    else { throw new Error(`Unsupported dtype: ${tensorMeta.dtype}`); }
+                    
+                    const byteLength = numElements * bytesPerElement;
+                    if (dataOffset + byteLength > fileBuffer.byteLength) {
+                        throw new Error('File is corrupt; attempting to read past buffer end.');
+                    }
+                    
+                    // Create a safe copy of the data slice for both aligned and unaligned offsets
+                    const dataSlice = allChunks.slice(dataOffset, dataOffset + byteLength);
+                    const alignedBuffer = new Uint8Array(dataSlice);
+                    
+                    let flatData;
+                    if (tensorMeta.dtype === 'float32') {
+                        flatData = new Float32Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                    } else {
+                        flatData = new Float64Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                    }
+                    
+                    dataOffset += byteLength;
+                    
+                    // Reshape back into standard JavaScript Arrays
+                    if (tensorMeta.shape.length === 1) {
+                        return Array.from(flatData);
+                    } else if (tensorMeta.shape.length === 2) {
+                        const [rows, cols] = tensorMeta.shape;
+                        const reshaped = [];
+                        for (let i = 0; i < rows; i++) {
+                            reshaped.push(Array.from(flatData.slice(i * cols, (i + 1) * cols)));
+                        }
+                        return reshaped;
+                    } else {
+                        throw new Error(`Unsupported tensor dimension: ${tensorMeta.shape.length}`);
+                    }
+                };
+                
+                updateModelLoadingProgress(85, 'Reconstructing model...');
+                
+                // Reconstruct model and assign to globals
+                const modelData = {
+                    tokenEmbeddings: readAndReshapeTensor(metadata.tokenEmbeddings),
+                    finalRMSNormGamma: readAndReshapeTensor(metadata.finalRMSNormGamma),
+                    transformerBlocks: metadata.transformerBlocks.map(blockMeta => {
+                        const loadedBlock = {};
+                        for (const tensorName in blockMeta) {
+                            loadedBlock[tensorName] = readAndReshapeTensor(blockMeta[tensorName]);
+                        }
+                        remapOptionalBlockTensors(loadedBlock);
+                        return loadedBlock;
+                    })
+                };
+                
+                updateModelLoadingProgress(90, 'Loading model into memory...');
+                
+                // Assign to global variables
+                globalThis.tokenEmbeddings_GLOBAL = modelData.tokenEmbeddings;
+                globalThis.rmsGamma3_GLOBAL = modelData.finalRMSNormGamma;
+                globalThis.GLOBAL_WEIGHTS = modelData.transformerBlocks;
+                
+                updateModelLoadingProgress(100, 'Model loaded successfully!');
+                
+                console.log(`--- Successfully loaded weights from ${filename}. ---`);
+                console.log(`Token embeddings shape: [${modelData.tokenEmbeddings.length}, ${modelData.tokenEmbeddings[0]?.length || 0}]`);
+                console.log(`Transformer blocks: ${modelData.transformerBlocks.length}`);
+                
+                modelLoadingComplete = true;
+                
+                // Initialize LM network objects after model is loaded
+                globalThis.lmNetwork = new LmNetwork();
+                await lmNetwork.init();
+                lmNetwork.setupInference(SEQUENCE_LENGTH);
+
+                
+                console.log('✓ LM network objects initialized');
+                
+                // Hide indicator after a short delay
+                setTimeout(() => {
+                    $modelLoadingIndicator.addClass('loaded');
+                    setTimeout(() => {
+                        $modelLoadingIndicator.addClass('hidden');
+                    }, 500);
+                }, 1000);
+                
+                return true;
+                
+            } catch (error) {
+                console.error(`!!! Error loading model from '${filename}':`, error);
+                updateModelLoadingProgress(0, `Error: ${error.message}`);
+                
+                // Change styling to show error
+                $modelLoadingIndicator.css('border-color', '#ef4444');
+                $modelProgressFill.css('background', 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)');
+                
+                return false;
+            }
+        }
+        
+        // Load model weights from binary format (V2 - CUDA column-major format)
+        // This loader handles column-major data saved by the CUDA trainer
+        async function loadModelWeightsV2(filename, cdnFallbackUrl = null) {
+            console.log(`--- Attempting to load binary model weights (V2/CUDA format) from ${filename}... ---`);
+            
+            // Show loading indicator
+            $modelLoadingIndicator.removeClass('hidden');
+            updateModelLoadingProgress(0, 'Fetching model file...');
+            
+            try {
+                // Try to fetch the model file locally first, then fall back to CDN
+                let response;
+                try {
+                    response = await fetch(filename);
+                    if (!response.ok) {
+                        throw new Error(`Local fetch failed: ${response.status} ${response.statusText}`);
+                    }
+                    console.log(`Loaded model from local path: ${filename}`);
+                } catch (localError) {
+                    if (cdnFallbackUrl) {
+                        console.warn(`Local model unavailable (${localError.message}). Falling back to CDN...`);
+                        updateModelLoadingProgress(5, 'Local file not found, trying CDN...');
+                        response = await fetch(cdnFallbackUrl);
+                        if (!response.ok) {
+                            throw new Error(`Failed to fetch model from CDN: ${response.status} ${response.statusText}`);
+                        }
+                        console.log(`Loaded model from CDN: ${cdnFallbackUrl}`);
+                    } else {
+                        throw localError;
+                    }
+                }
+                
+                // Get content length for progress tracking
+                const contentLength = response.headers.get('content-length');
+                const total = contentLength ? parseInt(contentLength, 10) : 0;
+                
+                updateModelLoadingProgress(10, 'Downloading model...');
+                
+                // Read the response body with progress
+                let received = 0;
+                const reader = response.body.getReader();
+                const chunks = [];
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) break;
+                    
+                    chunks.push(value);
+                    received += value.length;
+                    
+                    // Update progress (10% to 70% for download)
+                    if (total > 0) {
+                        const downloadProgress = 10 + (received / total) * 60;
+                        updateModelLoadingProgress(downloadProgress, `Downloading: ${(received / 1024 / 1024).toFixed(1)} MB`);
+                    }
+                }
+                
+                updateModelLoadingProgress(70, 'Parsing binary data...');
+                
+                // Combine chunks into a single Uint8Array
+                const allChunks = new Uint8Array(received);
+                let position = 0;
+                for (const chunk of chunks) {
+                    allChunks.set(chunk, position);
+                    position += chunk.length;
+                }
+                
+                // Convert to ArrayBuffer for DataView operations
+                const fileBuffer = allChunks.buffer;
+                const dataView = new DataView(fileBuffer);
+                
+                updateModelLoadingProgress(75, 'Reading header...');
+                
+                // Read header
+                const headerLength = dataView.getBigUint64(0, true); // true = little-endian
+                const headerStart = 8;
+                const headerEnd = headerStart + Number(headerLength);
+                
+                if (headerEnd > fileBuffer.byteLength) {
+                    throw new Error('Header length specified in file is larger than the file itself.');
+                }
+                
+                const headerBuffer = allChunks.slice(headerStart, headerEnd);
+                const metadata = JSON.parse(new TextDecoder('utf-8').decode(headerBuffer));
+                
+                updateModelLoadingProgress(80, 'Processing tensors (V2 format)...');
+                
+                // Calculate where the data payload starts, accounting for potential padding
+                const ALIGNMENT = 8;
+                const paddingNeeded = (ALIGNMENT - (headerEnd % ALIGNMENT)) % ALIGNMENT;
+                let dataOffset = headerEnd + paddingNeeded;
+                
+                // Read tensor from column-major format and convert to row-major JS arrays
+                // For a 2D tensor stored column-major with shape [rows, cols]:
+                // - Element at (row, col) is at index: col * rows + row
+                // - We want to read into row-major: row * cols + col
+                const readTensorColumnMajorToRowMajor = (tensorMeta) => {
+                    const numElements = tensorMeta.shape.reduce((acc, val) => acc * val, 1);
+                    let bytesPerElement;
+                    
+                    if (tensorMeta.dtype === 'float32') { bytesPerElement = 4; }
+                    else if (tensorMeta.dtype === 'float64') { bytesPerElement = 8; }
+                    else { throw new Error(`Unsupported dtype: ${tensorMeta.dtype}`); }
+                    
+                    const byteLength = numElements * bytesPerElement;
+                    if (dataOffset + byteLength > fileBuffer.byteLength) {
+                        throw new Error('File is corrupt; attempting to read past buffer end.');
+                    }
+                    
+                    // Create a safe copy of the data slice
+                    const dataSlice = allChunks.slice(dataOffset, dataOffset + byteLength);
+                    const alignedBuffer = new Uint8Array(dataSlice);
+                    
+                    let flatData;
+                    if (tensorMeta.dtype === 'float32') {
+                        flatData = new Float32Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                    } else {
+                        flatData = new Float64Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                    }
+                    
+                    dataOffset += byteLength;
+                    
+                    // Handle reshaping based on dimensions
+                    if (tensorMeta.shape.length === 1) {
+                        // 1D tensor - no transpose needed
+                        return Array.from(flatData);
+                    } else if (tensorMeta.shape.length === 2) {
+                        // 2D tensor - read column-major as row-major
+                        // File shape is [rows, cols], data is stored column-major
+                        const [rows, cols] = tensorMeta.shape;
+                        const reshaped = [];
+                        
+                        for (let row = 0; row < rows; row++) {
+                            const rowData = new Array(cols);
+                            for (let col = 0; col < cols; col++) {
+                                // Column-major index: col * rows + row
+                                rowData[col] = flatData[col * rows + row];
+                            }
+                            reshaped.push(rowData);
+                        }
+                        return reshaped;
+                    } else {
+                        throw new Error(`Unsupported tensor dimension: ${tensorMeta.shape.length}`);
+                    }
+                };
+                
+                // Special reader for tokenEmbeddings: CUDA saves as [dim, vocabSize] column-major
+                // but JS expects [vocabSize, dim] row-major
+                const readTokenEmbeddingsTransposed = (tensorMeta) => {
+                    const numElements = tensorMeta.shape.reduce((acc, val) => acc * val, 1);
+                    let bytesPerElement;
+                    
+                    if (tensorMeta.dtype === 'float32') { bytesPerElement = 4; }
+                    else if (tensorMeta.dtype === 'float64') { bytesPerElement = 8; }
+                    else { throw new Error(`Unsupported dtype: ${tensorMeta.dtype}`); }
+                    
+                    const byteLength = numElements * bytesPerElement;
+                    if (dataOffset + byteLength > fileBuffer.byteLength) {
+                        throw new Error('File is corrupt; attempting to read past buffer end.');
+                    }
+                    
+                    // Create a safe copy of the data slice
+                    const dataSlice = allChunks.slice(dataOffset, dataOffset + byteLength);
+                    const alignedBuffer = new Uint8Array(dataSlice);
+                    
+                    let flatData;
+                    if (tensorMeta.dtype === 'float32') {
+                        flatData = new Float32Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                    } else {
+                        flatData = new Float64Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                    }
+                    
+                    dataOffset += byteLength;
+                    
+                    // File has shape [dim, vocabSize] stored column-major
+                    // JS expects [vocabSize, dim] row-major
+                    const [dim, vocabSize] = tensorMeta.shape;
+                    const reshaped = [];
+                    
+                    // Output shape: [vocabSize, dim]
+                    // For each vocab token (output row), collect all dim values
+                    for (let v = 0; v < vocabSize; v++) {
+                        const rowData = new Array(dim);
+                        for (let d = 0; d < dim; d++) {
+                            // In column-major [dim, vocabSize]: element at (d, v) is at index v * dim + d
+                            rowData[d] = flatData[v * dim + d];
+                        }
+                        reshaped.push(rowData);
+                    }
+                    
+                    console.log(`Token embeddings transposed: [${dim}, ${vocabSize}] -> [${vocabSize}, ${dim}]`);
+                    return reshaped;
+                };
+                
+                updateModelLoadingProgress(85, 'Reconstructing model (V2 format)...');
+                
+                // Reconstruct model - tokenEmbeddings needs special transpose handling
+                const tokenEmbeddings = readTokenEmbeddingsTransposed(metadata.tokenEmbeddings);
+                const finalRMSNormGamma = readTensorColumnMajorToRowMajor(metadata.finalRMSNormGamma);
+                
+                const transformerBlocks = metadata.transformerBlocks.map(blockMeta => {
+                    const loadedBlock = {};
+                    for (const tensorName in blockMeta) {
+                        loadedBlock[tensorName] = readTensorColumnMajorToRowMajor(blockMeta[tensorName]);
+                    }
+                    remapOptionalBlockTensors(loadedBlock);
+                    return loadedBlock;
+                });
+                
+                const modelData = {
+                    tokenEmbeddings,
+                    finalRMSNormGamma,
+                    transformerBlocks
+                };
+                
+                updateModelLoadingProgress(90, 'Loading model into memory...');
+                
+                // Assign to global variables
+                globalThis.tokenEmbeddings_GLOBAL = modelData.tokenEmbeddings;
+                globalThis.rmsGamma3_GLOBAL = modelData.finalRMSNormGamma;
+                globalThis.GLOBAL_WEIGHTS = modelData.transformerBlocks;
+                
+                updateModelLoadingProgress(100, 'Model loaded successfully!');
+                
+                console.log(`--- Successfully loaded weights (V2) from ${filename}. ---`);
+                console.log(`Token embeddings shape: [${modelData.tokenEmbeddings.length}, ${modelData.tokenEmbeddings[0]?.length || 0}]`);
+                console.log(`Transformer blocks: ${modelData.transformerBlocks.length}`);
+                
+                modelLoadingComplete = true;
+                
+                // Initialize LM network objects after model is loaded
+                globalThis.lmNetwork = new LmNetwork();
+                await lmNetwork.init();
+                lmNetwork.setupInference(SEQUENCE_LENGTH);
+                
+                console.log('✓ LM network objects initialized');
+                
+                // Hide indicator after a short delay
+                setTimeout(() => {
+                    $modelLoadingIndicator.addClass('loaded');
+                    setTimeout(() => {
+                        $modelLoadingIndicator.addClass('hidden');
+                    }, 500);
+                }, 1000);
+                
+                return true;
+                
+            } catch (error) {
+                console.error(`!!! Error loading model (V2) from '${filename}':`, error);
+                updateModelLoadingProgress(0, `Error: ${error.message}`);
+                
+                // Change styling to show error
+                $modelLoadingIndicator.css('border-color', '#ef4444');
+                $modelProgressFill.css('background', 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)');
+                
+                return false;
+            }
+        }
+        
+        // Load model weights from split binary files (V3 - for GitHub <100MB limit)
+        // File A: tokenEmbeddings, finalRMSNormGamma, transformer blocks 0 to (numTransformers/2 - 1)
+        // File B: transformer blocks (numTransformers/2) to (numTransformers - 1)
+        async function loadModelWeightsV3(filenameA, filenameB) {
+            console.log(`--- Attempting to load split binary model weights (V3) from ${filenameA} and ${filenameB}... ---`);
+            
+            // Show loading indicator
+            $modelLoadingIndicator.removeClass('hidden');
+            updateModelLoadingProgress(0, 'Fetching model files...');
+            
+            try {
+                // Helper to fetch and read a file with progress tracking
+                const fetchFileWithProgress = async (filename, progressStart, progressEnd) => {
+                    const response = await fetch(filename);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const contentLength = response.headers.get('content-length');
+                    const total = contentLength ? parseInt(contentLength, 10) : 0;
+                    
+                    let received = 0;
+                    const reader = response.body.getReader();
+                    const chunks = [];
+                    
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        chunks.push(value);
+                        received += value.length;
+                        
+                        if (total > 0) {
+                            const fileProgress = progressStart + (received / total) * (progressEnd - progressStart);
+                            updateModelLoadingProgress(fileProgress, `Downloading: ${(received / 1024 / 1024).toFixed(1)} MB`);
+                        }
+                    }
+                    
+                    const allChunks = new Uint8Array(received);
+                    let position = 0;
+                    for (const chunk of chunks) {
+                        allChunks.set(chunk, position);
+                        position += chunk.length;
+                    }
+                    
+                    return allChunks;
+                };
+                
+                // Fetch both files (A: 5-40%, B: 40-70%)
+                updateModelLoadingProgress(5, 'Downloading file A...');
+                const allChunksA = await fetchFileWithProgress(filenameA, 5, 40);
+                
+                updateModelLoadingProgress(40, 'Downloading file B...');
+                const allChunksB = await fetchFileWithProgress(filenameB, 40, 70);
+                
+                updateModelLoadingProgress(70, 'Parsing binary data...');
+                
+                // Helper to parse a file and create tensor readers
+                const parseFile = (allChunks) => {
+                    const fileBuffer = allChunks.buffer;
+                    const dataView = new DataView(fileBuffer);
+                    
+                    const headerLength = dataView.getBigUint64(0, true);
+                    const headerStart = 8;
+                    const headerEnd = headerStart + Number(headerLength);
+                    
+                    if (headerEnd > fileBuffer.byteLength) {
+                        throw new Error('Header length specified in file is larger than the file itself.');
+                    }
+                    
+                    const headerBuffer = allChunks.slice(headerStart, headerEnd);
+                    const metadata = JSON.parse(new TextDecoder('utf-8').decode(headerBuffer));
+                    
+                    const ALIGNMENT = 8;
+                    const paddingNeeded = (ALIGNMENT - (headerEnd % ALIGNMENT)) % ALIGNMENT;
+                    let dataOffset = headerEnd + paddingNeeded;
+                    
+                    return { allChunks, fileBuffer, metadata, dataOffset };
+                };
+                
+                // Parse both files
+                const fileA = parseFile(allChunksA);
+                const fileB = parseFile(allChunksB);
+                
+                updateModelLoadingProgress(75, 'Processing tensors (V3 format)...');
+                
+                // Create tensor reader for a specific file context
+                const createTensorReader = (fileCtx) => {
+                    let dataOffset = fileCtx.dataOffset;
+                    
+                    const readTensorColumnMajorToRowMajor = (tensorMeta) => {
+                        const numElements = tensorMeta.shape.reduce((acc, val) => acc * val, 1);
+                        let bytesPerElement;
+                        
+                        if (tensorMeta.dtype === 'float32') { bytesPerElement = 4; }
+                        else if (tensorMeta.dtype === 'float64') { bytesPerElement = 8; }
+                        else { throw new Error(`Unsupported dtype: ${tensorMeta.dtype}`); }
+                        
+                        const byteLength = numElements * bytesPerElement;
+                        if (dataOffset + byteLength > fileCtx.fileBuffer.byteLength) {
+                            throw new Error('File is corrupt; attempting to read past buffer end.');
+                        }
+                        
+                        const dataSlice = fileCtx.allChunks.slice(dataOffset, dataOffset + byteLength);
+                        const alignedBuffer = new Uint8Array(dataSlice);
+                        
+                        let flatData;
+                        if (tensorMeta.dtype === 'float32') {
+                            flatData = new Float32Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                        } else {
+                            flatData = new Float64Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                        }
+                        
+                        dataOffset += byteLength;
+                        
+                        if (tensorMeta.shape.length === 1) {
+                            return Array.from(flatData);
+                        } else if (tensorMeta.shape.length === 2) {
+                            const [rows, cols] = tensorMeta.shape;
+                            const reshaped = [];
+                            
+                            for (let row = 0; row < rows; row++) {
+                                const rowData = new Array(cols);
+                                for (let col = 0; col < cols; col++) {
+                                    rowData[col] = flatData[col * rows + row];
+                                }
+                                reshaped.push(rowData);
+                            }
+                            return reshaped;
+                        } else {
+                            throw new Error(`Unsupported tensor dimension: ${tensorMeta.shape.length}`);
+                        }
+                    };
+                    
+                    const readTokenEmbeddingsTransposed = (tensorMeta) => {
+                        const numElements = tensorMeta.shape.reduce((acc, val) => acc * val, 1);
+                        let bytesPerElement;
+                        
+                        if (tensorMeta.dtype === 'float32') { bytesPerElement = 4; }
+                        else if (tensorMeta.dtype === 'float64') { bytesPerElement = 8; }
+                        else { throw new Error(`Unsupported dtype: ${tensorMeta.dtype}`); }
+                        
+                        const byteLength = numElements * bytesPerElement;
+                        if (dataOffset + byteLength > fileCtx.fileBuffer.byteLength) {
+                            throw new Error('File is corrupt; attempting to read past buffer end.');
+                        }
+                        
+                        const dataSlice = fileCtx.allChunks.slice(dataOffset, dataOffset + byteLength);
+                        const alignedBuffer = new Uint8Array(dataSlice);
+                        
+                        let flatData;
+                        if (tensorMeta.dtype === 'float32') {
+                            flatData = new Float32Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                        } else {
+                            flatData = new Float64Array(alignedBuffer.buffer, alignedBuffer.byteOffset, numElements);
+                        }
+                        
+                        dataOffset += byteLength;
+                        
+                        const [dim, vocabSize] = tensorMeta.shape;
+                        const reshaped = [];
+                        
+                        for (let v = 0; v < vocabSize; v++) {
+                            const rowData = new Array(dim);
+                            for (let d = 0; d < dim; d++) {
+                                rowData[d] = flatData[v * dim + d];
+                            }
+                            reshaped.push(rowData);
+                        }
+                        
+                        console.log(`Token embeddings transposed: [${dim}, ${vocabSize}] -> [${vocabSize}, ${dim}]`);
+                        return reshaped;
+                    };
+                    
+                    return { readTensorColumnMajorToRowMajor, readTokenEmbeddingsTransposed };
+                };
+                
+                updateModelLoadingProgress(80, 'Loading file A (embeddings + transformers 1-4)...');
+                
+                // Read from file A
+                const readerA = createTensorReader(fileA);
+                const tokenEmbeddings = readerA.readTokenEmbeddingsTransposed(fileA.metadata.tokenEmbeddings);
+                const finalRMSNormGamma = readerA.readTensorColumnMajorToRowMajor(fileA.metadata.finalRMSNormGamma);
+                
+                const transformerBlocksA = fileA.metadata.transformerBlocks.map(blockMeta => {
+                    const loadedBlock = {};
+                    for (const tensorName in blockMeta) {
+                        loadedBlock[tensorName] = readerA.readTensorColumnMajorToRowMajor(blockMeta[tensorName]);
+                    }
+                    remapOptionalBlockTensors(loadedBlock);
+                    return loadedBlock;
+                });
+                
+                updateModelLoadingProgress(85, 'Loading file B (transformers 5-8)...');
+                
+                // Read from file B
+                const readerB = createTensorReader(fileB);
+                const transformerBlocksB = fileB.metadata.transformerBlocks.map(blockMeta => {
+                    const loadedBlock = {};
+                    for (const tensorName in blockMeta) {
+                        loadedBlock[tensorName] = readerB.readTensorColumnMajorToRowMajor(blockMeta[tensorName]);
+                    }
+                    remapOptionalBlockTensors(loadedBlock);
+                    return loadedBlock;
+                });
+                
+                // Combine transformer blocks
+                const transformerBlocks = [...transformerBlocksA, ...transformerBlocksB];
+                
+                const modelData = {
+                    tokenEmbeddings,
+                    finalRMSNormGamma,
+                    transformerBlocks
+                };
+                
+                updateModelLoadingProgress(90, 'Loading model into memory...');
+                
+                // Assign to global variables
+                globalThis.tokenEmbeddings_GLOBAL = modelData.tokenEmbeddings;
+                globalThis.rmsGamma3_GLOBAL = modelData.finalRMSNormGamma;
+                globalThis.GLOBAL_WEIGHTS = modelData.transformerBlocks;
+                
+                updateModelLoadingProgress(100, 'Model loaded successfully!');
+                
+                console.log(`--- Successfully loaded weights (V3 split) from ${filenameA} and ${filenameB}. ---`);
+                console.log(`Token embeddings shape: [${modelData.tokenEmbeddings.length}, ${modelData.tokenEmbeddings[0]?.length || 0}]`);
+                console.log(`Transformer blocks from A: ${transformerBlocksA.length}, from B: ${transformerBlocksB.length}`);
+                console.log(`Total transformer blocks: ${modelData.transformerBlocks.length}`);
+                
+                modelLoadingComplete = true;
+                
+                // Initialize LM network objects after model is loaded
+                globalThis.lmNetwork = new LmNetwork();
+                await lmNetwork.init();
+                lmNetwork.setupInference(SEQUENCE_LENGTH);
+                
+                console.log('✓ LM network objects initialized');
+                
+                // Hide indicator after a short delay
+                setTimeout(() => {
+                    $modelLoadingIndicator.addClass('loaded');
+                    setTimeout(() => {
+                        $modelLoadingIndicator.addClass('hidden');
+                    }, 500);
+                }, 1000);
+                
+                return true;
+                
+            } catch (error) {
+                console.error(`!!! Error loading model (V3) from '${filenameA}' and '${filenameB}':`, error);
+                updateModelLoadingProgress(0, `Error: ${error.message}`);
+                
+                // Change styling to show error
+                $modelLoadingIndicator.css('border-color', '#ef4444');
+                $modelProgressFill.css('background', 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)');
+                
+                return false;
+            }
+        }
+        
+        // Update the model loading progress indicator
+        function updateModelLoadingProgress(percentage, statusText) {
+            $modelProgressFill.css('width', percentage + '%');
+            $modelLoadingStatus.text(statusText);
+            
+            // If complete, update styling
+            if (percentage >= 100) {
+                $('.model-loading-spinner').replaceWith('<span class="model-success-icon">✓</span>');
+                $modelLoadingStatus.css('color', 'var(--success-color)');
+            }
+        }
+
+        // --- UI Flow & Event Handlers ---
+
+        function setupInferenceUI() {
+            // Hide selection, show inference area
+            $modeSelectionSection.addClass('hidden');
+            $inferenceSection.removeClass('hidden');
+            
+            // Update story ID display if a story was loaded
+            if (currentStoryId !== null) {
+                $('#story-id-display').text(`(Story #${currentStoryId})`);
+            } else {
+                $('#story-id-display').text('');
+            }
+
+            // Calculate the context based on percentage
+            let contextText;
+            let contextTokens;
+            
+            if (fullStoryTokens.length > 0) {
+                // Working with tokenized story
+                const numTokens = currentInferenceConfig.percentage < 100 
+                    ? Math.max(1, Math.round(fullStoryTokens.length * (currentInferenceConfig.percentage / 100)))
+                    : fullStoryTokens.length;
+                
+                console.log(`Showing ${numTokens} tokens out of ${fullStoryTokens.length} (${currentInferenceConfig.percentage}%)`);
+                
+                // Slice the token array
+                contextTokens = fullStoryTokens.slice(0, numTokens);
+                
+                // Convert to text (vocab is an array, tokenId is the index)
+                contextText = contextTokens.map(tokenVal => {
+                    const tokenIndex = globalThis.vocab.indexOf[tokenVal];
+                    if (tokenIndex === -1) {
+                        console.warn(`Unknown token value: ${tokenVal}`);
+                        return `[UNK${tokenVal}]`;
+                    }
+                    return tokenVal;
+                }).join('');
+                
+                // For free inference mode, show the full story with the remainder in different color
+                if (currentInferenceConfig.type === 'free-inference') {
+                    $storyContextDisplay.empty();
+                    
+                    // Add the actual context in normal color
+                    const $contextPart = $('<span>').text(contextText);
+                    $storyContextDisplay.append($contextPart);
+                    
+                    // Add the remainder in muted color
+                    const remainderTokens = fullStoryTokens.slice(numTokens);
+                    if (remainderTokens.length > 0) {
+                        const remainderText = remainderTokens.map(tokenVal => {
+                            const tokenIndex = globalThis.vocab.indexOf[tokenVal];
+                            if (tokenIndex === -1) {
+                                return `[UNK${tokenVal}]`;
+                            }
+                            return tokenVal;
+                        }).join('');
+                        
+                        const $remainderPart = $('<span>').css({
+                            'color': '#94a3b8',
+                            'opacity': '0.6',
+                            'font-style': 'italic'
+                        }).text(remainderText);
+                        $storyContextDisplay.append($remainderPart);
+                    }
+                } else {
+                    // Teacher forced mode: just show the context text normally
+                    $storyContextDisplay.text(contextText);
+                }
+            } else {
+                // Working with text (from scratch mode or old implementation)
+                const storyLength = fullStoryText.length;
+                const sliceEnd = Math.floor(storyLength * (currentInferenceConfig.percentage / 100));
+                contextText = fullStoryText.substring(0, sliceEnd);
+                $storyContextDisplay.text(contextText);
+            }
+
+            // Preview the story-so-far (the context fed to the model) in the output
+            // area before generation. The original "Story Context" panel stays hidden.
+            $outputArea.text(contextText && contextText.length ? contextText : "The model's response will appear here.");
+            
+            // Configure UI based on whether user came from "from scratch"
+            if (isFromScratch) {
+                // Hide options, make context editable by default
+                $contextOptions.addClass('hidden');
+                $storyContextDisplay.attr('contenteditable', 'true').addClass('editable');
+                $editContextCheckbox.prop('checked', false);
+            } else {
+                // Show options, make context non-editable by default
+                $contextOptions.removeClass('hidden');
+                $storyContextDisplay.attr('contenteditable', 'false').removeClass('editable');
+                $editContextCheckbox.prop('checked', false);
+                
+                // Update current selection text
+                updateSelectionText();
+            }
+            
+            // Auto-select "show probabilities" for teacher-forced mode and show rank option
+            if (currentInferenceConfig.type === 'teacher-forced') {
+                $showProbabilitiesCheckbox.prop('checked', true);
+                $showRankControl.removeClass('hidden');
+            } else {
+                $showRankControl.addClass('hidden');
+                $showRankCheckbox.prop('checked', false);
+            }
+        }
+        
+        function updateSelectionText() {
+            if (isInstructMode) {
+                $currentSelectionText.text('Instruct Prompt');
+            } else if (currentInferenceConfig.type === 'teacher-forced') {
+                $currentSelectionText.text('Teacher Forced Mode (100%)');
+            } else if (currentInferenceConfig.type === 'free-inference') {
+                $currentSelectionText.text(`Free Inference Mode (${currentInferenceConfig.percentage}%)`);
+            }
+        }
+
+        // Continue from the instruct prompt-builder (Step 1) straight to the
+        // Generate page: the built instruct tokens become the context, exactly as
+        // a slice of a pre-existing story used to. Generation continues from them.
+        function startInstructInference(instructTokens) {
+            if (!instructTokens || !instructTokens.length) return;
+
+            fullStoryTokens = instructTokens;
+            fullStoryText = instructTokens.join('');
+            currentStoryId = null;
+            isFromScratch = false;
+            isCustomText = false;
+            isInstructMode = true;
+
+            // Reset any prior generation state.
+            generatedTokens = [];
+            freeInferenceContextTokens = [];
+            freeInferenceNumContextTokens = 0;
+
+            // Free inference, full instruct prompt as context.
+            currentInferenceConfig = { type: 'free-inference', percentage: 100 };
+
+            // Hide Step 1 (the builder) and the legacy sections, show the
+            // Generate page with the instruct context pre-filled.
+            $('#instruct-builder-section').addClass('hidden');
+            $storySection.addClass('hidden');
+            $configSection.addClass('hidden');
+            $('.write-story-section').addClass('hidden');
+            $modeSelectionSection.addClass('hidden');
+
+            setupInferenceUI();
+        }
+
+        // Handle GPU/CPU mode switching
+        $modeRadios.on('change', function() {
+            $contextWindowSelector.toggleClass('hidden', this.value === 'gpu');
+        });
+
+        // Handle loading a story
+        async function loadStory(storyId) {
+            if (isNaN(storyId) || storyId < 0 || storyId > MAX_STORY_ID) {
+                alert('Please enter a valid story number.');
+                return;
+            }
+
+            // Show a temporary loading state
+            $storySection.html('<h2>Loading story...</h2>');
+
+            try {
+                const storyText = await fetchStory(storyId);
+                fullStoryText = storyText;
+                currentStoryId = storyId; // Store the story ID
+                isFromScratch = false; // User loaded a story
+                isCustomText = false; // Loaded story, not custom text
+
+                // Transition to the next step
+                $storySection.addClass('hidden');
+                $configSection.addClass('hidden'); // Hide config too for a cleaner view
+                $('.write-story-section').addClass('hidden');
+                $modeSelectionSection.removeClass('hidden');
+            } catch (error) {
+                console.log(error);
+                $storySection.html('<h2>Failed to load story. Please try again.</h2>');
+                console.error("Error fetching story:", error);
+            }
+        }
+
+        $randomStoryBtn.on('click', function() {
+            const randomId = Math.floor(Math.random() * (MAX_STORY_ID + 1));
+            $storyIdInput.val(randomId);
+            loadStory(randomId);
+        });
+
+        $loadStoryBtn.on('click', () => loadStory(parseInt($storyIdInput.val(), 10)));
+        
+        // --- Write Story from Scratch Handlers ---
+        
+        // Helper function to normalize quotes and collapse multiple newlines
+        function normalizeText(text) {
+            // Replace fancy double quotes with standard double quote
+            let normalized = text.replace(/[\u201C\u201D\u201E\u201F\u2033\u2036]/g, '"');
+            // Replace fancy single quotes with standard single quote
+            normalized = normalized.replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'");
+            // Collapse multiple newlines to single newline
+            normalized = normalized.replace(/\n{2,}/g, '\n');
+            return normalized;
+        }
+        
+        // Helper function to sanitize text by replacing non-vocab characters with spaces
+        function sanitizeTextForVocab(text) {
+            // First normalize quotes and collapse newlines
+            let processedText = normalizeText(text);
+            
+            let sanitizedText = '';
+            let replacedChars = [];
+            
+            for (let i = 0; i < processedText.length; i++) {
+                const char = processedText[i];
+                // Check if the character is in the vocabulary
+                if (globalThis.tokenValsRecord[char] === undefined) {
+                    // Replace with space if not in vocab
+                    sanitizedText += ' ';
+                    if (!replacedChars.includes(char)) {
+                        replacedChars.push(char);
+                    }
+                } else {
+                    sanitizedText += char;
+                }
+            }
+            
+            return { sanitizedText, replacedChars };
+        }
+        
+        // Process custom story text: tokenize via the custom-text pipeline.
+        // Returns an array of token strings (all valid model-vocabulary entries;
+        // characters not in the vocabulary are replaced with '~').
+        async function processCustomStoryText(text) {
+            // Detect characters not in the vocabulary so we can warn the user.
+            // These will be represented as '~' tokens by the tokenizer.
+            const { replacedChars } = sanitizeTextForVocab(text);
+            if (replacedChars.length > 0) {
+                console.log('Characters not in vocabulary (replaced with "~"):', replacedChars);
+            }
+
+            // Tokenize using the new custom-text tokenization pipeline:
+            // divideTextIntoWords -> tokenizeText (BPE merges) -> validate against vocab.
+            const tokens = await globalThis.tokenizeCustomText(text);
+            console.log('Tokenized text into', tokens.length, 'tokens');
+
+            // Reconstruct the post-tokenization text for display.
+            const sanitizedText = tokens.join('');
+
+            // Truncate to SEQUENCE_LENGTH if necessary
+            const truncatedTokens = tokens.slice(0, SEQUENCE_LENGTH);
+            if (tokens.length > SEQUENCE_LENGTH) {
+                console.log(`Truncated from ${tokens.length} to ${SEQUENCE_LENGTH} tokens`);
+            }
+
+            return { sanitizedText, tokens: truncatedTokens, replacedChars };
+        }
+        
+        $writeStoryBtn.on('click', function() {
+            // Show the custom story modal
+            $('#custom-story-modal').removeClass('hidden').css('display', 'flex');
+            $('#custom-story-textarea').val('').focus();
+            $('#custom-story-warning').hide();
+        });
+        
+        // Cancel button in modal
+        $('#custom-story-cancel').on('click', function() {
+            $('#custom-story-modal').addClass('hidden').css('display', 'none');
+        });
+        
+        // Submit button in modal - process text and go to teacher mode
+        $('#custom-story-submit').on('click', async function() {
+            const rawText = $('#custom-story-textarea').val();
+            
+            if (!rawText.trim()) {
+                $('#custom-story-warning').text('Please enter some text.').show();
+                return;
+            }
+            
+            // Ensure vocab is loaded
+            await loadVocab();
+            
+            // Process the text
+            const { sanitizedText, tokens, replacedChars } = await processCustomStoryText(rawText);
+            
+            // Show warning if characters were replaced
+            if (replacedChars.length > 0) {
+                const charList = replacedChars.map(c => `"${c}"`).join(', ');
+                $('#custom-story-warning').text(`Note: Replaced unsupported characters: ${charList}`).show();
+            }
+            
+            // Check if we have any tokens
+            if (tokens.length === 0) {
+                $('#custom-story-warning').text('No valid tokens could be created from this text.').show();
+                return;
+            }
+            
+            // Store the tokens as fullStoryTokens (like we do for loaded stories)
+            fullStoryTokens = tokens;
+            fullStoryText = sanitizedText;
+            isFromScratch = false; // Not "from scratch" anymore - we have tokenized content
+            isCustomText = true; // Content came from user-entered custom text
+            
+            console.log('Custom story processed:', tokens.length, 'tokens');
+            
+            // Hide the modal
+            $('#custom-story-modal').addClass('hidden').css('display', 'none');
+            
+            // Hide story section and show mode selection (like loading a story)
+            $storySection.addClass('hidden');
+            $configSection.addClass('hidden');
+            $('.write-story-section').addClass('hidden');
+            $modeSelectionSection.removeClass('hidden');
+        });
+        
+        // Close modal when clicking outside
+        $('#custom-story-modal').on('click', function(e) {
+            if (e.target === this) {
+                $(this).addClass('hidden').css('display', 'none');
+            }
+        });
+        
+        // --- Inference Mode Selection Handlers ---
+        
+        $teacherForcedBtn.on('click', function() {
+            currentInferenceConfig = { type: 'teacher-forced', percentage: 100 };
+            setupInferenceUI();
+        });
+
+        $freeInferenceBtn.on('click', function() {
+            // For user-entered custom text, the whole text is the context to continue,
+            // so skip percentage selection and use 100%.
+            if (isCustomText) {
+                currentInferenceConfig = { type: 'free-inference', percentage: 100 };
+                setupInferenceUI();
+                return;
+            }
+            $percentageSelector.removeClass('hidden');
+        });
+
+        $percentageSelect.on('change', function() {
+            const percentage = parseInt($(this).val(), 10);
+            if (!isNaN(percentage)) {
+                currentInferenceConfig = { type: 'free-inference', percentage: percentage };
+                setupInferenceUI();
+                
+                // Update quick button selection
+                $('.quick-percentage-btn').removeClass('selected');
+                $(`.quick-percentage-btn[data-percentage="${percentage}"]`).addClass('selected');
+            }
+        });
+        
+        // Quick percentage button handlers
+        $(document).on('click', '.quick-percentage-btn', function() {
+            const percentage = parseInt($(this).attr('data-percentage'), 10);
+            
+            // Update dropdown to match
+            $percentageSelect.val(percentage);
+            
+            // Update button selection
+            $('.quick-percentage-btn').removeClass('selected');
+            $(this).addClass('selected');
+            
+            // Proceed with inference setup
+            currentInferenceConfig = { type: 'free-inference', percentage: percentage };
+            setupInferenceUI();
+        });
+        
+        // --- Context Options Handlers ---
+        
+        $editContextCheckbox.on('change', function() {
+            if ($(this).is(':checked')) {
+                $storyContextDisplay.attr('contenteditable', 'true').addClass('editable');
+            } else {
+                $storyContextDisplay.attr('contenteditable', 'false').removeClass('editable');
+            }
+        });
+        
+        $modifySelectionLink.on('click', function() {
+            // Clear generation state
+            generatedTokens = [];
+            freeInferenceContextTokens = [];
+            freeInferenceNumContextTokens = 0;
+
+            // Instruct mode: go back to the Step 1 prompt-builder instead of the
+            // legacy mode-selection step.
+            if (isInstructMode) {
+                isInstructMode = false;
+                $inferenceSection.addClass('hidden');
+                $('#instruct-builder-section').removeClass('hidden');
+                return;
+            }
+
+            // Go back to mode selection
+            $inferenceSection.addClass('hidden');
+            $modeSelectionSection.removeClass('hidden');
+            $percentageSelector.addClass('hidden');
+            $percentageSelect.val('');
+        });
+        
+        // Handle probability display toggle
+        $showProbabilitiesCheckbox.on('change', function() {
+            // Re-render the output with or without probabilities
+            if (generatedTokens.length > 0) {
+                if (currentInferenceConfig.type === 'free-inference') {
+                    // For free inference, use the specialized render function
+                    renderFreeInferenceOutput(freeInferenceContextTokens, generatedTokens, false);
+                } else {
+                    // For teacher forced mode, use the teacher render function
+                    renderInteractiveOutput(teacherModeFirstToken, generatedTokens);
+                }
+            }
+        });
+        
+        // Handle rank display toggle (teacher mode only)
+        $showRankCheckbox.on('change', function() {
+            // Re-render the output with or without ranks
+            if (generatedTokens.length > 0 && currentInferenceConfig.type === 'teacher-forced') {
+                renderInteractiveOutput(teacherModeFirstToken, generatedTokens);
+            }
+        });
+
+        // Handle the main "Generate" button click
+        $generateBtn.on('click', async function() {
+            // If generation is in progress, stop it
+            if (isGenerating) {
+                shouldStopGeneration = true;
+                $generateBtn.text('Generate').css('background', 'linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%)');
+                return;
+            }
+            
+            // Check if model is loaded
+            if (!modelLoadingComplete) {
+                alert('Please wait for the model to finish loading.');
+                return;
+            }
+            
+            // Get the current text from the story context (may have been edited)
+            const storyContext = $storyContextDisplay.text();
+            
+            // Set generation state
+            isGenerating = true;
+            shouldStopGeneration = false;
+            
+            $loader.removeClass('hidden');
+            $generateBtn.prop('disabled', false); // Keep enabled to allow stopping
+            $generateBtn.text('Stop Generation').css('background', 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)');
+            
+            // Only show "Generating..." if we're starting fresh (not resuming)
+            const isResuming = (currentInferenceConfig.type === 'free-inference' && generatedTokens.length > 0);
+            if (!isResuming) {
+                $outputArea.text('Generating...');
+            }
+
+            const mode = $('input[name="mode"]:checked').val();
+
+            try {
+                // Determine input tokens based on whether we're using tokenized story or text
+                let contextTokens;
+                
+                if (fullStoryTokens.length > 0) {
+                    // Working with tokenized story - get the slice based on percentage
+                    const numTokens = currentInferenceConfig.percentage < 100 
+                        ? Math.max(1, Math.round(fullStoryTokens.length * (currentInferenceConfig.percentage / 100)))
+                        : fullStoryTokens.length;
+                    
+                    // Get the token values (not indices) from the story
+                    contextTokens = fullStoryTokens.slice(0, Math.min(numTokens, SEQUENCE_LENGTH));
+                    console.log(`Using ${contextTokens.length} tokens from story`);
+                } else {
+                    // From scratch mode - we don't have tokens yet
+                    contextTokens = [];
+                    console.log('From scratch mode - no context tokens');
+                }
+                
+                const numContextTokens = contextTokens.length;
+                
+                // Check inference mode
+                if (currentInferenceConfig.type === 'teacher-forced') {
+                    // ===== TEACHER FORCED MODE =====
+                    await runTeacherForcedInference(contextTokens, numContextTokens, SEQUENCE_LENGTH);
+                } else if (currentInferenceConfig.type === 'free-inference') {
+                    // ===== FREE INFERENCE MODE =====
+                    // Check if we're continuing from a token replacement
+                    if (generatedTokens.length > 0) {
+                        // We have existing generated tokens - continue from where we left off
+                        console.log(`Continuing generation from ${generatedTokens.length} existing tokens`);
+                        
+                        // Build query array with context + existing generated tokens
+                        let queryArr = [...contextTokens];
+                        for (let i = 0; i < generatedTokens.length; i++) {
+                            queryArr.push(generatedTokens[i].value);
+                        }
+                        
+                        // Pad to SEQUENCE_LENGTH
+                        const numRealTokens = queryArr.length;
+                        if (numRealTokens < SEQUENCE_LENGTH) {
+                            const paddingNeeded = SEQUENCE_LENGTH - numRealTokens;
+                            const padding = Array(paddingNeeded).fill('?');
+                            queryArr = queryArr.concat(padding);
+                        } else if (numRealTokens > SEQUENCE_LENGTH) {
+                            queryArr = queryArr.slice(0, SEQUENCE_LENGTH);
+                        }
+                        
+                        // Continue generation
+                        await continueGenerationFrom(queryArr, numRealTokens, SEQUENCE_LENGTH);
+                    } else {
+                        // Fresh start
+                        await runFreeInference(contextTokens, numContextTokens, SEQUENCE_LENGTH);
+                    }
+                }
+                
+            } catch (error) {
+                $outputArea.text('An error occurred. Check the console.');
+                console.error("Inference Error:", error);
+            } finally {
+                // Reset generation state
+                isGenerating = false;
+                shouldStopGeneration = false;
+                $loader.addClass('hidden');
+                $generateBtn.prop('disabled', false);
+                $generateBtn.text('Generate').css('background', 'linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%)');
+            }
+        });
+        
+        // Teacher Forced Mode: validate model predictions against actual next tokens
+        async function runTeacherForcedInference(contextTokens, numContextTokens, SEQUENCE_LENGTH) {
+            // Pad to SEQUENCE_LENGTH tokens (e.g., 256)
+            let inputTokens = [...contextTokens];
+            if (inputTokens.length < SEQUENCE_LENGTH) {
+                const paddingNeeded = SEQUENCE_LENGTH - inputTokens.length;
+                const padding = Array(paddingNeeded).fill('?');
+                inputTokens = inputTokens.concat(padding);
+            }
+            
+            console.log(`Running teacher-forced inference with ${inputTokens.length} tokens`);
+            
+            // Run the model
+            lmNetwork.runQueryThroughModel(inputTokens);
+
+            const logitScoresPostSoftmaxRowMajorFlat = await globalThis.readFloat32Buffer(lmNetwork, lmNetwork.logitScoresByInputTokenPostSoftmax.buffer, SEQUENCE_LENGTH * lmNetwork.vocabSize * 4);
+            console.log(logitScoresPostSoftmaxRowMajorFlat);
+            
+            const logitScoresByInputTokenPostSoftmaxUI = [];
+            for (let vocabIndex = 0; vocabIndex < lmNetwork.vocabSize; vocabIndex++) {
+                const vocabIndexOffset = vocabIndex * SEQUENCE_LENGTH;
+
+                for (let tokenIndex = 0; tokenIndex < SEQUENCE_LENGTH; tokenIndex++) {
+                    if (vocabIndex === 0) {
+                        logitScoresByInputTokenPostSoftmaxUI.push([]);
+                    }
+
+                    logitScoresByInputTokenPostSoftmaxUI[tokenIndex].push(logitScoresPostSoftmaxRowMajorFlat[vocabIndexOffset + tokenIndex]);
+                }
+            }
+
+            console.log(`\n--- Teacher Forced Mode Validation ---`);
+            console.log(`Predictions for input tokens (up to padding)`);
+            
+            // Define column widths for nice formatting
+            const currentTokenWidth = 20;
+            const nextTokenWidth = 20;
+            
+            // Print table header
+            const header = "Current Token".padEnd(currentTokenWidth) + "->  " + "Actual Next".padEnd(nextTokenWidth) + "Model Confidence";
+            console.log(header);
+            console.log("-".repeat(header.length));
+            
+            // Process tokens and build generatedTokens array
+            generatedTokens = [];
+            const predictionProbs = [];
+            
+            // Iterate through actual (non-padding) tokens
+            for (let j = 0; j < numContextTokens - 1; j++) {
+                const currentTokenStr = inputTokens[j];
+                const actualNextTokenStr = inputTokens[j + 1];
+                const actualNextTokenVocabIndex = globalThis.tokenValsRecord[actualNextTokenStr];
+                
+                // Handle case where token might not be in vocabulary
+                if (actualNextTokenVocabIndex === undefined || actualNextTokenVocabIndex === -1) {
+                    console.log(`Warning: Token "${actualNextTokenStr}" not found in vocabulary. Skipping.`);
+                    continue;
+                }
+                
+                // Get the probability the model assigned to the correct next token
+                const modelConfidence = logitScoresByInputTokenPostSoftmaxUI[j][actualNextTokenVocabIndex];
+                predictionProbs.push(modelConfidence);
+                
+                // Format the probability as a percentage string
+                const confidencePercentStr = (modelConfidence * 100).toFixed(2) + '%';
+
+                // Format the output line with padding for alignment
+                const line = `"${currentTokenStr}"`.padEnd(currentTokenWidth) +
+                             `->  "${actualNextTokenStr}"`.padEnd(nextTokenWidth) +
+                             confidencePercentStr;
+                
+                console.log(line);
+                
+                // Build the data structure for interactive display
+                const predictionsWithIndices = Array.from(logitScoresByInputTokenPostSoftmaxUI[j]).map((prob, vocabIdx) => ({
+                    val: prob,
+                    originalIndex: vocabIdx
+                }));
+                
+                // Sort by probability descending
+                predictionsWithIndices.sort((a, b) => b.val - a.val);
+                
+                // Find the rank of the actual token (1-indexed)
+                const actualTokenRank = predictionsWithIndices.findIndex(p => p.originalIndex === actualNextTokenVocabIndex) + 1;
+                
+                // Get top 10
+                const top10 = predictionsWithIndices.slice(0, 10);
+                
+                // Convert to topPredictions format with token strings
+                const topPredictions = top10.map(pred => ({
+                    token: globalThis.vocab[pred.originalIndex],
+                    probability: pred.val
+                }));
+                
+                // Store token data with actual token probability and rank for teacher mode
+                generatedTokens.push({
+                    value: actualNextTokenStr,
+                    topPredictions: topPredictions,
+                    actualTokenProbability: modelConfidence, // Store actual token probability separately
+                    actualTokenRank: actualTokenRank // Store actual token rank (1 to vocabSize)
+                });
+            }
+            
+            // Calculate evaluation loss
+            let evalLoss = 0;
+            for (let predictionIndex = 0; predictionIndex < predictionProbs.length; predictionIndex++) {
+                const prob = predictionProbs[predictionIndex] > 0.0001 ? predictionProbs[predictionIndex] : 0.0001;
+                evalLoss += (-Math.log(prob));
+            }
+            const avgEvalLoss = evalLoss / predictionProbs.length;
+            console.log('Avg Eval Loss: ' + avgEvalLoss.toFixed(4));
+            console.log("---------------------------------\n");
+            
+            // Render the interactive output
+            teacherModeFirstToken = numContextTokens > 0 ? inputTokens[0] : '';
+            renderInteractiveOutput(teacherModeFirstToken, generatedTokens);
+        }
+
+        async function runFreeInference(contextTokens, numContextTokens, SEQUENCE_LENGTH) {
+            console.log(`\n--- Free Inference Mode ---`);
+            console.log(`Starting with ${numContextTokens} context tokens`);
+            
+            // Store context for token replacement feature
+            freeInferenceContextTokens = [...contextTokens];
+            freeInferenceNumContextTokens = numContextTokens;
+            
+            // Initialize working array with context tokens
+            let currentTokens = [...contextTokens];
+            
+            // Pad to SEQUENCE_LENGTH if needed (e.g., 256)
+            if (currentTokens.length < SEQUENCE_LENGTH) {
+                const paddingNeeded = SEQUENCE_LENGTH - currentTokens.length;
+                const padding = Array(paddingNeeded).fill('?');
+                currentTokens = currentTokens.concat(padding);
+            } else if (currentTokens.length > SEQUENCE_LENGTH) {
+                // If context is longer than SEQUENCE_LENGTH, slice to exactly SEQUENCE_LENGTH
+                currentTokens = currentTokens.slice(0, SEQUENCE_LENGTH);
+                console.log(`Context truncated to ${SEQUENCE_LENGTH} tokens`);
+            }
+            
+            const numRealTokensStart = Math.min(numContextTokens, SEQUENCE_LENGTH);
+            generatedTokens = [];
+            
+            // Generate tokens iteratively until we reach SEQUENCE_LENGTH+1 total tokens
+            // rightEndIndex goes from numContextTokens-1 to SEQUENCE_LENGTH-1 (e.g., 255) inclusive
+            // This generates tokens at positions numContextTokens through SEQUENCE_LENGTH (e.g., 256), giving SEQUENCE_LENGTH+1 (e.g., 257) total tokens
+            const maxIterations = SEQUENCE_LENGTH - numRealTokensStart + 1;
+            console.log(`Will generate up to ${maxIterations} tokens`);
+            
+            // Batch UI updates every 3 tokens
+            const BATCH_SIZE = 3;
+            let tokensSinceLastUpdate = 0;
+            
+            for (let iteration = 0; iteration < maxIterations; iteration++) {
+                // Check if user requested stop
+                if (shouldStopGeneration) {
+                    console.log('Generation stopped by user.');
+                    break;
+                }
+                
+                const numRealTokens = numRealTokensStart + iteration;
+                const rightEndIndex = numRealTokens - 1; // Last true token before first padded token
+                
+                console.log(`\n--- Iteration ${iteration + 1}: Generating token ${numRealTokens + 1} (rightEndIndex=${rightEndIndex}) ---`);
+                
+                // Rest 200ms before inference
+                // await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // Run inference in free inference mode (teacherMode = false)
+                lmNetwork.runQueryThroughModel(currentTokens, false, rightEndIndex, iteration > 0);
+                
+                const rightEndPredictionsRowMajorFlat = await globalThis.readFloat32Buffer(lmNetwork, lmNetwork.rightEndIndexTokenSoftmaxPredictions.buffer, 2 * lmNetwork.vocabSize * 4);
+
+                const rightEndPredictions = [];
+                for (let vocabIndex = 0; vocabIndex < lmNetwork.vocabSize; vocabIndex++) {
+                        rightEndPredictions.push([vocabIndex, rightEndPredictionsRowMajorFlat[vocabIndex * 2 + 1]])
+                }
+                // Sort by probability (column 1) descending
+                rightEndPredictions.sort((a, b) => b[1] - a[1]);
+                
+                // Get top 10 and convert to topPredictions format with token strings
+                // Each element is [tokenIndex, probability]
+                const topPredictions = rightEndPredictions.slice(0, 10).map(pred => ({
+                    token: globalThis.vocab[Math.round(pred[0])], // Token index from column 0
+                    probability: pred[1] // Softmax probability from column 1
+                }));
+                
+                // The predicted token is the top prediction
+                const predictedToken = topPredictions[0].token;
+                const predictedProb = topPredictions[0].probability;
+                
+                console.log(`Predicted token: "${predictedToken}" with probability ${(predictedProb * 100).toFixed(2)}%`);
+                console.log(`Top 3: ${topPredictions.slice(0, 3).map(p => `"${p.token}" (${(p.probability * 100).toFixed(1)}%)`).join(', ')}`);
+                
+                // Store token data
+                generatedTokens.push({
+                    value: predictedToken,
+                    topPredictions: topPredictions
+                });
+                
+                // Update currentTokens: replace the padding at position numRealTokens with the predicted token
+                currentTokens[numRealTokens] = predictedToken;
+                
+                // Update UI in batches of 3 tokens or at the end
+                tokensSinceLastUpdate++;
+                const isLastIteration = rightEndIndex >= (SEQUENCE_LENGTH - 1) || iteration === maxIterations - 1;
+                
+                if (tokensSinceLastUpdate >= BATCH_SIZE || isLastIteration) {
+                    renderFreeInferenceOutput(contextTokens, generatedTokens, true); // true = disable tooltips during generation
+                    tokensSinceLastUpdate = 0;
+                }
+                
+                // Stop if we've reached rightEndIndex of SEQUENCE_LENGTH-1 (e.g., 255) which gives us the final token
+                if (rightEndIndex >= SEQUENCE_LENGTH - 1) {
+                    console.log(`Reached rightEndIndex of ${SEQUENCE_LENGTH - 1}. Generated token at position ${SEQUENCE_LENGTH} (${SEQUENCE_LENGTH + 1}th token). Stopping.`);
+                    break;
+                }
+            }
+            
+            // Final render with tooltips enabled
+            renderFreeInferenceOutput(contextTokens, generatedTokens, false);
+            
+            console.log(`\n--- Free Inference Complete ---`);
+            console.log(`Generated ${generatedTokens.length} tokens`);
+        }
+        
+        // Render output for free inference: static context + interactive predictions
+        function renderFreeInferenceOutput(contextTokens, predictedTokens, disableTooltips = false) {
+            $outputArea.empty();
+            
+            // Render all context tokens as static (non-interactive) and muted
+            contextTokens.forEach((tokenVal, index) => {
+                const $contextToken = $('<span>')
+                    .addClass('token-static')
+                    .css({
+                        'cursor': 'default',
+                        'padding': '2px 0',
+                        'display': 'inline',
+                        'color': '#94a3b8',
+                        'opacity': '0.6',
+                        'font-style': 'italic'
+                    })
+                    .text(tokenVal);
+                $outputArea.append($contextToken);
+            });
+            
+            // Render predicted tokens with interactivity
+            if (predictedTokens && predictedTokens.length > 0) {
+                const showProbabilities = $showProbabilitiesCheckbox.is(':checked');
+                
+                predictedTokens.forEach((tokenData, index) => {
+                    if (showProbabilities && tokenData.topPredictions && tokenData.topPredictions.length > 0) {
+                        // Show token with probability label above
+                        const $wrapper = $('<span>').addClass('token-with-prob');
+                        
+                        // Get the probability of the actual token (first in topPredictions)
+                        const actualProb = tokenData.topPredictions[0].probability;
+                        const $probLabel = $('<span>')
+                            .addClass('token-prob-label')
+                            .text((actualProb * 100).toFixed(1) + '%');
+                        
+                        const $token = $('<span>')
+                            .addClass('token') // Always use 'token' class for consistent styling
+                            .attr('data-token-index', index)
+                            .css(disableTooltips ? {'cursor': 'default'} : {}) // Only disable pointer during generation
+                            .text(tokenData.value);
+                        
+                        $wrapper.append($probLabel).append($token);
+                        $outputArea.append($wrapper);
+                    } else {
+                        // Show token without probability
+                        const $token = $('<span>')
+                            .addClass('token') // Always use 'token' class for consistent styling
+                            .attr('data-token-index', index)
+                            .css(disableTooltips ? {'cursor': 'default'} : {}) // Only disable pointer during generation
+                            .text(tokenData.value);
+                        
+                        $outputArea.append($token);
+                    }
+                });
+                
+                // Attach event handlers only if tooltips are enabled
+                if (!disableTooltips) {
+                    attachTokenEventHandlers();
+                }
+            }
+        }
+        
+        // Render output with interactive token elements
+        function renderInteractiveOutput(firstToken, tokens) {
+            $outputArea.empty();
+            
+            // Add the first token as static context (no predictions, no interactivity)
+            if (firstToken) {
+                const $firstToken = $('<span>')
+                    .addClass('token-static')
+                    .css({
+                        'cursor': 'default',
+                        'padding': '2px 0',
+                        'display': 'inline'
+                    })
+                    .text(firstToken);
+                $outputArea.append($firstToken);
+            }
+            
+            // If no token data, we're done
+            if (!tokens || tokens.length === 0) {
+                return;
+            }
+            
+            const showProbabilities = $showProbabilitiesCheckbox.is(':checked');
+            const showRank = $showRankCheckbox.is(':checked');
+            const isTeacherMode = currentInferenceConfig.type === 'teacher-forced';
+            
+            // Create interactive spans for each predicted token
+            tokens.forEach((tokenData, index) => {
+                const hasTeacherData = tokenData.actualTokenProbability !== undefined;
+                const shouldShowLabel = (showProbabilities || (showRank && hasTeacherData)) && tokenData.topPredictions && tokenData.topPredictions.length > 0;
+                
+                if (shouldShowLabel) {
+                    // Show token with label above
+                    const $wrapper = $('<span>').addClass('token-with-prob');
+                    
+                    // Build label text based on what's checked
+                    let labelText = '';
+                    if (showRank && hasTeacherData) {
+                        labelText = '#' + tokenData.actualTokenRank;
+                        if (showProbabilities) {
+                            const actualProb = tokenData.actualTokenProbability;
+                            labelText += ' (' + (actualProb * 100).toFixed(1) + '%)';
+                        }
+                    } else if (showProbabilities) {
+                        // Use actualTokenProbability if available (teacher mode), otherwise use top prediction
+                        const actualProb = hasTeacherData 
+                            ? tokenData.actualTokenProbability 
+                            : tokenData.topPredictions[0].probability;
+                        labelText = (actualProb * 100).toFixed(1) + '%';
+                    }
+                    
+                    const $probLabel = $('<span>')
+                        .addClass('token-prob-label')
+                        .text(labelText);
+                    
+                    const $token = $('<span>')
+                        .addClass('token')
+                        .attr('data-token-index', index)
+                        .text(tokenData.value);
+                    
+                    $wrapper.append($probLabel).append($token);
+                    $outputArea.append($wrapper);
+                    
+                    // Add space after (except for last token)
+                    if (index < tokens.length - 1) {
+                        $outputArea.append(' ');
+                    }
+                } else {
+                    // Show token without probability
+                    const $token = $('<span>')
+                        .addClass('token')
+                        .attr('data-token-index', index)
+                        .text(tokenData.value + (index < tokens.length - 1 ? ' ' : ''));
+                    
+                    $outputArea.append($token);
+                }
+            });
+            
+            // Attach event handlers
+            attachTokenEventHandlers();
+        }
+        
+        // Attach hover and click handlers to tokens
+        function attachTokenEventHandlers() {
+            $('.token').on('mouseenter', function(e) {
+                // Clear any pending hide timeout
+                if (tooltipHideTimeout) {
+                    clearTimeout(tooltipHideTimeout);
+                    tooltipHideTimeout = null;
+                }
+                
+                const tokenIndex = parseInt($(this).attr('data-token-index'));
+                showTokenTooltip($(this), tokenIndex, e);
+            });
+            
+            $('.token').on('mouseleave', function() {
+                // Delay hiding to allow mouse to move to tooltip or adjacent token
+                tooltipHideTimeout = setTimeout(() => {
+                    if (!$('.token-tooltip:hover').length && !$('.token:hover').length) {
+                        hideTokenTooltip();
+                    }
+                }, 150);
+            });
+        }
+        
+        // Show tooltip with token predictions
+        function showTokenTooltip($token, tokenIndex, event) {
+            hideTokenTooltip(); // Close any existing tooltip
+            
+            const tokenData = generatedTokens[tokenIndex];
+            if (!tokenData || !tokenData.topPredictions) return;
+            
+            const $tooltip = $('<div>').addClass('token-tooltip');
+            
+            // Header
+            $tooltip.append(
+                $('<div>').addClass('token-tooltip-header').text('Top Token Predictions')
+            );
+            
+            // In teacher mode, show actual token first with special styling
+            if (tokenData.actualTokenProbability !== undefined) {
+                const $actualOption = $('<div>')
+                    .addClass('token-option')
+                    .addClass('actual-token-option')
+                    .css({
+                        'background-color': '#e0f2fe',
+                        'border-left': '3px solid #0284c7'
+                    });
+                
+                $actualOption.append(
+                    $('<span>').addClass('token-rank').text('#' + tokenData.actualTokenRank).css({
+                        'background': '#0c4a6e',
+                        'color': 'white',
+                        'font-weight': '700'
+                    })
+                );
+                
+                $actualOption.append(
+                    $('<span>').addClass('token-value').text(tokenData.value).css('font-weight', '600')
+                );
+                
+                $actualOption.append(
+                    $('<span>').addClass('token-probability')
+                        .text((tokenData.actualTokenProbability * 100).toFixed(2) + '%')
+                        .css('color', '#0284c7')
+                );
+                
+                $tooltip.append($actualOption);
+                
+                // Add a small divider
+                $tooltip.append($('<div>').css({
+                    'height': '1px',
+                    'background': '#e2e8f0',
+                    'margin': '4px 0'
+                }));
+            }
+            
+            // Token options (top 10 predictions)
+            tokenData.topPredictions.forEach((pred, rank) => {
+                const $option = $('<div>')
+                    .addClass('token-option')
+                    .attr('data-token-index', tokenIndex)
+                    .attr('data-token-value', pred.token);
+                
+                $option.append(
+                    $('<span>').addClass('token-rank').text(rank + 1)
+                );
+                
+                $option.append(
+                    $('<span>').addClass('token-value').text(pred.token)
+                );
+                
+                $option.append(
+                    $('<span>').addClass('token-probability')
+                        .text((pred.probability * 100).toFixed(2) + '%')
+                );
+                
+                $option.on('click', function() {
+                    handleTokenReplacement(tokenIndex, pred.token);
+                });
+                
+                $tooltip.append($option);
+            });
+            
+            // Keep tooltip open when hovering over it
+            $tooltip.on('mouseenter', function() {
+                // Clear any pending hide timeout
+                if (tooltipHideTimeout) {
+                    clearTimeout(tooltipHideTimeout);
+                    tooltipHideTimeout = null;
+                }
+            });
+            
+            $tooltip.on('mouseleave', function() {
+                // Hide immediately when leaving tooltip
+                tooltipHideTimeout = setTimeout(() => {
+                    if (!$('.token:hover').length) {
+                        hideTokenTooltip();
+                    }
+                }, 150);
+            });
+            
+            // Position tooltip
+            $('body').append($tooltip);
+            
+            const tokenOffset = $token.offset();
+            const tooltipHeight = $tooltip.outerHeight();
+            const tooltipWidth = $tooltip.outerWidth();
+            const windowHeight = $(window).height();
+            const windowWidth = $(window).width();
+            
+            // Position below token by default
+            let top = tokenOffset.top + $token.outerHeight() + 5;
+            let left = tokenOffset.left;
+            
+            // If tooltip goes off bottom of screen, position above
+            if (top + tooltipHeight > windowHeight) {
+                top = tokenOffset.top - tooltipHeight - 5;
+            }
+            
+            // If tooltip goes off right of screen, adjust left
+            if (left + tooltipWidth > windowWidth) {
+                left = windowWidth - tooltipWidth - 20;
+            }
+            
+            $tooltip.css({
+                top: top + 'px',
+                left: left + 'px'
+            });
+            
+            activeTooltip = $tooltip;
+            $token.addClass('selected');
+        }
+        
+        // Hide tooltip
+        function hideTokenTooltip() {
+            // Clear any pending timeout
+            if (tooltipHideTimeout) {
+                clearTimeout(tooltipHideTimeout);
+                tooltipHideTimeout = null;
+            }
+            
+            if (activeTooltip) {
+                activeTooltip.remove();
+                activeTooltip = null;
+            }
+            $('.token.selected').removeClass('selected');
+        }
+        
+        // Handle token replacement (only for free inference mode)
+        function handleTokenReplacement(tokenIndex, newTokenValue) {
+            // Only work in free inference mode
+            if (currentInferenceConfig.type !== 'free-inference') {
+                hideTokenTooltip();
+                return;
+            }
+            
+            // Prevent replacement during generation
+            if (isGenerating) {
+                hideTokenTooltip();
+                return;
+            }
+            
+            console.log(`Replacing token at index ${tokenIndex} with "${newTokenValue}"`);
+            
+            // Don't hide tooltip - allow further replacements of the same token
+            // hideTokenTooltip();
+            
+            // Update the token value in generatedTokens
+            const oldValue = generatedTokens[tokenIndex].value;
+            generatedTokens[tokenIndex].value = newTokenValue;
+            
+            // Reorder topPredictions so the selected token appears first (for probability display)
+            if (generatedTokens[tokenIndex].topPredictions) {
+                const topPreds = generatedTokens[tokenIndex].topPredictions;
+                const selectedIndex = topPreds.findIndex(pred => pred.token === newTokenValue);
+                
+                if (selectedIndex > 0) {
+                    // Move the selected prediction to the front
+                    const selectedPred = topPreds[selectedIndex];
+                    topPreds.splice(selectedIndex, 1);
+                    topPreds.unshift(selectedPred);
+                }
+            }
+            
+            // Remove all tokens after the replaced token (they'll need to be regenerated)
+            generatedTokens = generatedTokens.slice(0, tokenIndex + 1);
+            
+            // Re-render with tooltips enabled (not during generation)
+            renderFreeInferenceOutput(freeInferenceContextTokens, generatedTokens, false);
+            
+            console.log(`Token ${tokenIndex} replaced: "${oldValue}" → "${newTokenValue}". Click Generate to continue.`);
+            
+            // Visual feedback for the replaced token
+            const $token = $(`.token[data-token-index="${tokenIndex}"]`);
+            $token.css('background-color', 'rgba(16, 185, 129, 0.3)');
+            setTimeout(() => {
+                $token.css('background-color', '');
+            }, 800);
+        }
+        
+        // Continue generation from a specific point (for token replacement)
+        async function continueGenerationFrom(currentTokens, numRealTokensStart, SEQUENCE_LENGTH) {
+            console.log(`\n--- Continuing Generation ---`);
+            console.log(`Starting from ${numRealTokensStart} real tokens`);
+            
+            const maxIterations = SEQUENCE_LENGTH - numRealTokensStart + 1;
+            
+            // Batch UI updates every 3 tokens
+            const BATCH_SIZE = 3;
+            let tokensSinceLastUpdate = 0;
+            
+            for (let iteration = 0; iteration < maxIterations; iteration++) {
+                // Check if user requested stop
+                if (shouldStopGeneration) {
+                    console.log('Generation stopped by user.');
+                    break;
+                }
+                
+                const numRealTokens = numRealTokensStart + iteration;
+                const rightEndIndex = numRealTokens - 1;
+                
+                console.log(`\n--- Iteration ${iteration + 1}: Generating token ${numRealTokens + 1} (rightEndIndex=${rightEndIndex}) ---`);
+                
+                // Rest 200ms before inference
+                // await new Promise(resolve => setTimeout(resolve, 200));
+                
+                lmNetwork.runQueryThroughModel(currentTokens, false, rightEndIndex, iteration > 0);
+
+                // Run inference in free inference mode
+                const rightEndPredictionsRowMajorFlat = await globalThis.readFloat32Buffer(lmNetwork, lmNetwork.rightEndIndexTokenSoftmaxPredictions.buffer, 2 * lmNetwork.vocabSize * 4);
+
+                const rightEndPredictions = [];
+                for (let vocabIndex = 0; vocabIndex < lmNetwork.vocabSize; vocabIndex++) {
+                    rightEndPredictions.push([vocabIndex, rightEndPredictionsRowMajorFlat[vocabIndex * 2 + 1]])
+                }
+                // Sort by probability descending
+                rightEndPredictions.sort((a, b) => b[1] - a[1]);
+                
+                // Get top 10 and convert to topPredictions format
+                const topPredictions = rightEndPredictions.slice(0, 10).map(pred => ({
+                    token: globalThis.vocab[Math.round(pred[0])],
+                    probability: pred[1]
+                }));
+                
+                // The predicted token is the top prediction
+                const predictedToken = topPredictions[0].token;
+                const predictedProb = topPredictions[0].probability;
+                
+                console.log(`Predicted token: "${predictedToken}" with probability ${(predictedProb * 100).toFixed(2)}%`);
+                
+                // Store token data
+                generatedTokens.push({
+                    value: predictedToken,
+                    topPredictions: topPredictions
+                });
+                
+                // Update currentTokens
+                currentTokens[numRealTokens] = predictedToken;
+                
+                // Update UI in batches
+                tokensSinceLastUpdate++;
+                const isLastIteration = rightEndIndex >= (SEQUENCE_LENGTH - 1) || iteration === maxIterations - 1;
+                
+                if (tokensSinceLastUpdate >= BATCH_SIZE || isLastIteration) {
+                    renderFreeInferenceOutput(freeInferenceContextTokens, generatedTokens, true);
+                    tokensSinceLastUpdate = 0;
+                }
+                
+                // Stop if we've reached rightEndIndex of SEQUENCE_LENGTH-1 (e.g., 255)
+                if (rightEndIndex >= (SEQUENCE_LENGTH - 1)) {
+                    console.log(`Reached rightEndIndex of ${SEQUENCE_LENGTH - 1}. Stopping.`);
+                    break;
+                }
+            }
+            
+            // Final render with tooltips enabled
+            renderFreeInferenceOutput(freeInferenceContextTokens, generatedTokens, false);
+            
+            console.log(`\n--- Continuation Complete ---`);
+        }
+        
+        // Handle "Start Over"
+        $resetFlowBtn.on('click', function(e) {
+            e.preventDefault();
+            fullStoryText = '';
+            fullStoryTokens = [];
+            currentStoryId = null;
+            isFromScratch = false;
+            isCustomText = false;
+            
+            // Clear generation state
+            generatedTokens = [];
+            freeInferenceContextTokens = [];
+            freeInferenceNumContextTokens = 0;
+            
+            // Reset UI to initial state
+            $inferenceSection.addClass('hidden');
+            $modeSelectionSection.addClass('hidden');
+            $percentageSelector.addClass('hidden');
+            $percentageSelect.val('');
+            $editContextCheckbox.prop('checked', false);
+            $storyContextDisplay.attr('contenteditable', 'false').removeClass('editable');
+
+            // Instruct mode: return to the Step 1 prompt-builder (the current flow)
+            // rather than restoring the legacy story-loading UI.
+            if (isInstructMode) {
+                isInstructMode = false;
+                $('#instruct-builder-section').removeClass('hidden');
+                return;
+            }
+
+            $storySection.html(`
+                <h2>Step 1: Load a Story</h2>
+                <button id="random-story-btn">Select a Random Story</button>
+                <div class="manual-story-input">
+                    or enter a story number (0 - 2,700,000):
+                    <input type="number" id="story-id-input" min="0" max="2700000">
+                    <button id="load-story-btn">Load</button>
+                </div>
+            `).removeClass('hidden');
+            
+            // $('.write-story-section').removeClass('hidden'); // Hidden until BPE script is updated
+            $('.write-story-section').removeClass('hidden');
+            
+            $configSection.removeClass('hidden');
+
+            // Re-bind events for the newly created elements
+            $('#random-story-btn').on('click', function() {
+                const randomId = Math.floor(Math.random() * (MAX_STORY_ID + 1));
+                $('#story-id-input').val(randomId);
+                loadStory(randomId);
+            });
+            $('#load-story-btn').on('click', () => loadStory(parseInt($('#story-id-input').val(), 10)));
+        });
+
+        // --- Initial Page Load ---
+        function populatePercentageDropdown() {
+            for (let i = 5; i <= 95; i += 5) {
+                $percentageSelect.append(`<option value="${i}">${i}%</option>`);
+            }
+            // Add 100% option
+            $percentageSelect.append(`<option value="100">100%</option>`);
+        }
+        
+        // Initialize on page load
+        async function initialize() {
+            populatePercentageDropdown();
+            $modeRadios.filter(':checked').trigger('change');
+
+            // Build the Step 1 prompt-builder dropdowns.
+            if (globalThis.InstructBuilder) {
+                globalThis.InstructBuilder.init('#instruct-builder-section', {
+                    onContinue: (instructTokens) => startInstructInference(instructTokens),
+                }).catch(err => {
+                    console.error('Failed to build prompt-builder dropdowns:', err);
+                });
+            }
+            
+            // Pre-load vocabulary
+            try {
+                await loadVocab();
+                console.log('✓ Vocabulary ready');
+            } catch (error) {
+                console.error('Failed to load vocabulary:', error);
+                alert('Failed to load vocabulary. Please refresh the page.');
+            }
+            
+            // Check if model selector should be shown
+            if (globalThis.SHOW_MODEL_SELECTOR) {
+                // Show model selector modal and wait for selection
+                $('#model-selector-modal').removeClass('hidden').css('display', 'flex');
+            } else {
+                // Load default model weights asynchronously (don't await - let it load in background).
+                // The weights file name comes from NetworkMeta.modelFile; the local and CDN
+                // base paths stay fixed and just get the file name appended.
+                loadModelWeightsV2('./model/' + NetworkMeta.modelFile, 'https://mini-llm-cuda.b-cdn.net/' + NetworkMeta.modelFile).then(success => {
+                    if (success) {
+                        console.log('✓ Model weights ready');
+                    } else {
+                        console.error('✗ Failed to load model weights');
+                    }
+                });               
+                /*loadModelWeightsV3('./model/weights_iter_600000_A.bin', './model/weights_iter_600000_B.bin').then(success => {
+                    if (success) {
+                        console.log('✓ Model weights ready');
+                    } else {
+                        console.error('✗ Failed to load model weights');
+                    }
+                });*/
+            }
+
+            /*loadJSONModelWeights('./model/model35.json').then(success => {
+                if (success) {
+                    console.log('✓ JSON Model weights ready');
+                } else {
+                    console.error('✗ Failed to load JSON model weights');
+                }
+            });*/
+        }
+        
+        // Model selector button handlers
+        $('.model-option-btn').on('click', function() {
+            const modelFile = $(this).data('model');
+            console.log(`Selected model: ${modelFile}`);
+            
+            // Hide the modal
+            $('#model-selector-modal').addClass('hidden').css('display', 'none');
+            
+            // Load the selected model
+            loadModelWeightsV2(modelFile).then(success => {
+                if (success) {
+                    console.log(`✓ Model ${modelFile} loaded successfully`);
+                } else {
+                    console.error(`✗ Failed to load model ${modelFile}`);
+                }
+            });
+        });
+        
+        // Add hover effect for model buttons
+        $('.model-option-btn').on('mouseenter', function() {
+            $(this).css({
+                'background': 'linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%)',
+                'color': 'white',
+                'border-color': 'var(--primary-color)'
+            });
+        }).on('mouseleave', function() {
+            $(this).css({
+                'background': 'white',
+                'color': 'var(--text-color)',
+                'border-color': 'var(--border-color)'
+            });
+        });
+        
+        initialize();
+    });
+    </script>
+    
+    <!-- Preload background image after page load (non-blocking) -->
+    <script>
+    window.addEventListener('load', function() {
+        // Create a new Image object to preload the background
+        const bgImage = new Image();
+        bgImage.src = 'victorianBackground.png';
+        // The CSS already references the image, so once it's loaded,
+        // the browser will use the cached version and display it
+    });
+    </script>
+
+</body>
+</html>

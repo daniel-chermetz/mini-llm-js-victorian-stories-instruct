@@ -975,7 +975,7 @@
             CONFIG_QUERY_GATING: false, // Enable Qwen-style query gating of the attention output
             CONFIG_VOCAB_V2: true, // Load victorianVocab_V2.json instead of victorianVocab.json
             contextLength: 1024, // Sequence length / context window (drives SEQUENCE_LENGTH)
-            modelFile:'lr_5e5_bs_5_768_16_4_iter_120000_loss_2_1_approx_instruct.bin', // Weights file (appended to ./model/ and CDN base)
+            modelFile: 'lr_5e5_bs_5_768_16_4_loss_1_72_instruct.bin', // Weights file (appended to ./model/ and CDN base)
         };
         globalThis.SEQUENCE_LENGTH = NetworkMeta.contextLength;
         globalThis.SHOW_MODEL_SELECTOR = false; // Set to true to show model selection modal on startup

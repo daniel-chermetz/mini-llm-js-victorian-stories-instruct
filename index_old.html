@@ -7,8 +7,8 @@
     
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <script src="./inference/inference_webgpu_fast.js"></script>
-    <script src="./inference/inference_helper_webgpu_fast.js"></script>
+    <script src="./inference/inference_webgpu.js"></script>
+    <script src="./inference/inference_helper_webgpu.js"></script>
     <script src="./inference/inference_bpe.js"></script>
     <script src="./inference/inference_bpe_tokenize_text.js"></script>
     <script src="./instruct/instruct_dropdowns.js"></script>
@@ -965,17 +965,17 @@
         
         // --- Global Data Storage ---
         globalThis.NetworkMeta = {
-            dimensions: 864,
-            heads: 6,
+            dimensions: 768,
+            heads: 4,
             ropeDenomBase: 10000,
             ffnDim: 3072,
             // ffnDimMultiplier: 4, // deprecated
-            numTransformers: 18,
+            numTransformers: 16,
             CONFIG_QK_RMS: true, // Enable per-head RMS normalization of queries/keys before attention
             CONFIG_QUERY_GATING: false, // Enable Qwen-style query gating of the attention output
             CONFIG_VOCAB_V2: true, // Load victorianVocab_V2.json instead of victorianVocab.json
-            contextLength: 1280, // L K/V slots; the token-index buffer has L + 1 slots (1281)
-            modelFile: 'lr_3e5_bs_5_864_18_6_qk_norm_instruct.bin', // Weights file (appended to ./model/ and CDN base)
+            contextLength: 1024, // Sequence length / context window (drives SEQUENCE_LENGTH)
+            modelFile: 'lr_5e5_bs_5_768_16_4_loss_1_72_instruct.bin', // Weights file (appended to ./model/ and CDN base)
         };
         globalThis.SEQUENCE_LENGTH = NetworkMeta.contextLength;
         globalThis.SHOW_MODEL_SELECTOR = false; // Set to true to show model selection modal on startup
@@ -2303,7 +2303,8 @@
         // --- Inference Mode Selection Handlers ---
         
         $teacherForcedBtn.on('click', function() {
-            alert('Teacher-forced probabilities are not available in the fast argmax/KV-cache path. Use free inference here or index.html for teacher-forced evaluation.');
+            currentInferenceConfig = { type: 'teacher-forced', percentage: 100 };
+            setupInferenceUI();
         });
 
         $freeInferenceBtn.on('click', function() {
@@ -2620,52 +2621,111 @@
             renderInteractiveOutput(teacherModeFirstToken, generatedTokens);
         }
 
-        const FAST_READBACK_BATCH_SIZE = 5;
-
-        async function decodeFastTokenBatches(seedTokens, renderContextTokens) {
-            const contextLength = lmNetwork.beginGeneration(seedTokens);
-            const maxGeneratedTokens = SEQUENCE_LENGTH - contextLength + 1;
-            console.log(`Fast K/V decode can generate up to ${maxGeneratedTokens} tokens`);
-
-            while (lmNetwork.hasMoreTokens()) {
+        async function runFreeInference(contextTokens, numContextTokens, SEQUENCE_LENGTH) {
+            console.log(`\n--- Free Inference Mode ---`);
+            console.log(`Starting with ${numContextTokens} context tokens`);
+            
+            // Store context for token replacement feature
+            freeInferenceContextTokens = [...contextTokens];
+            freeInferenceNumContextTokens = numContextTokens;
+            
+            // Initialize working array with context tokens
+            let currentTokens = [...contextTokens];
+            
+            // Pad to SEQUENCE_LENGTH if needed (e.g., 256)
+            if (currentTokens.length < SEQUENCE_LENGTH) {
+                const paddingNeeded = SEQUENCE_LENGTH - currentTokens.length;
+                const padding = Array(paddingNeeded).fill('?');
+                currentTokens = currentTokens.concat(padding);
+            } else if (currentTokens.length > SEQUENCE_LENGTH) {
+                // If context is longer than SEQUENCE_LENGTH, slice to exactly SEQUENCE_LENGTH
+                currentTokens = currentTokens.slice(0, SEQUENCE_LENGTH);
+                console.log(`Context truncated to ${SEQUENCE_LENGTH} tokens`);
+            }
+            
+            const numRealTokensStart = Math.min(numContextTokens, SEQUENCE_LENGTH);
+            generatedTokens = [];
+            
+            // Generate tokens iteratively until we reach SEQUENCE_LENGTH+1 total tokens
+            // rightEndIndex goes from numContextTokens-1 to SEQUENCE_LENGTH-1 (e.g., 255) inclusive
+            // This generates tokens at positions numContextTokens through SEQUENCE_LENGTH (e.g., 256), giving SEQUENCE_LENGTH+1 (e.g., 257) total tokens
+            const maxIterations = SEQUENCE_LENGTH - numRealTokensStart + 1;
+            console.log(`Will generate up to ${maxIterations} tokens`);
+            
+            // Batch UI updates every 3 tokens
+            const BATCH_SIZE = 3;
+            let tokensSinceLastUpdate = 0;
+            
+            for (let iteration = 0; iteration < maxIterations; iteration++) {
+                // Check if user requested stop
                 if (shouldStopGeneration) {
                     console.log('Generation stopped by user.');
                     break;
                 }
+                
+                const numRealTokens = numRealTokensStart + iteration;
+                const rightEndIndex = numRealTokens - 1; // Last true token before first padded token
+                
+                console.log(`\n--- Iteration ${iteration + 1}: Generating token ${numRealTokens + 1} (rightEndIndex=${rightEndIndex}) ---`);
+                
+                // Rest 200ms before inference
+                // await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // Run inference in free inference mode (teacherMode = false)
+                lmNetwork.runQueryThroughModel(currentTokens, false, rightEndIndex, iteration > 0);
+                
+                const rightEndPredictionsRowMajorFlat = await globalThis.readFloat32Buffer(lmNetwork, lmNetwork.rightEndIndexTokenSoftmaxPredictions.buffer, 2 * lmNetwork.vocabSize * 4);
 
-                // Run five dependent decode steps on the GPU, then copy only the
-                // newly written token-index range starting at the current index.
-                const newTokenIndices = await lmNetwork.generateTokenBatch(FAST_READBACK_BATCH_SIZE);
-                for (const tokenIndex of newTokenIndices) {
-                    const predictedToken = globalThis.vocab[tokenIndex];
-                    if (predictedToken === undefined) {
-                        throw new Error(`GPU returned invalid vocabulary index ${tokenIndex}.`);
-                    }
-                    generatedTokens.push({
-                        value: predictedToken,
-                        topPredictions: [],
-                    });
+                const rightEndPredictions = [];
+                for (let vocabIndex = 0; vocabIndex < lmNetwork.vocabSize; vocabIndex++) {
+                        rightEndPredictions.push([vocabIndex, rightEndPredictionsRowMajorFlat[vocabIndex * 2 + 1]])
                 }
-
-                renderFreeInferenceOutput(renderContextTokens, generatedTokens, true);
-                console.log(`Read back ${newTokenIndices.length} token index slot(s); ${generatedTokens.length} generated total.`);
+                // Sort by probability (column 1) descending
+                rightEndPredictions.sort((a, b) => b[1] - a[1]);
+                
+                // Get top 10 and convert to topPredictions format with token strings
+                // Each element is [tokenIndex, probability]
+                const topPredictions = rightEndPredictions.slice(0, 10).map(pred => ({
+                    token: globalThis.vocab[Math.round(pred[0])], // Token index from column 0
+                    probability: pred[1] // Softmax probability from column 1
+                }));
+                
+                // The predicted token is the top prediction
+                const predictedToken = topPredictions[0].token;
+                const predictedProb = topPredictions[0].probability;
+                
+                console.log(`Predicted token: "${predictedToken}" with probability ${(predictedProb * 100).toFixed(2)}%`);
+                console.log(`Top 3: ${topPredictions.slice(0, 3).map(p => `"${p.token}" (${(p.probability * 100).toFixed(1)}%)`).join(', ')}`);
+                
+                // Store token data
+                generatedTokens.push({
+                    value: predictedToken,
+                    topPredictions: topPredictions
+                });
+                
+                // Update currentTokens: replace the padding at position numRealTokens with the predicted token
+                currentTokens[numRealTokens] = predictedToken;
+                
+                // Update UI in batches of 3 tokens or at the end
+                tokensSinceLastUpdate++;
+                const isLastIteration = rightEndIndex >= (SEQUENCE_LENGTH - 1) || iteration === maxIterations - 1;
+                
+                if (tokensSinceLastUpdate >= BATCH_SIZE || isLastIteration) {
+                    renderFreeInferenceOutput(contextTokens, generatedTokens, true); // true = disable tooltips during generation
+                    tokensSinceLastUpdate = 0;
+                }
+                
+                // Stop if we've reached rightEndIndex of SEQUENCE_LENGTH-1 (e.g., 255) which gives us the final token
+                if (rightEndIndex >= SEQUENCE_LENGTH - 1) {
+                    console.log(`Reached rightEndIndex of ${SEQUENCE_LENGTH - 1}. Generated token at position ${SEQUENCE_LENGTH} (${SEQUENCE_LENGTH + 1}th token). Stopping.`);
+                    break;
+                }
             }
-        }
-
-        async function runFreeInference(contextTokens, numContextTokens, SEQUENCE_LENGTH) {
-            console.log(`\n--- Fast Free Inference Mode ---`);
-            if (numContextTokens === 0) {
-                throw new Error('Fast inference requires at least one context token.');
-            }
-
-            freeInferenceContextTokens = contextTokens.slice(0, SEQUENCE_LENGTH);
-            freeInferenceNumContextTokens = freeInferenceContextTokens.length;
-            generatedTokens = [];
-
-            await decodeFastTokenBatches(freeInferenceContextTokens, freeInferenceContextTokens);
-            renderFreeInferenceOutput(freeInferenceContextTokens, generatedTokens, false);
-
-            console.log(`\n--- Fast Free Inference Complete ---`);
+            
+            // Final render with tooltips enabled
+            renderFreeInferenceOutput(contextTokens, generatedTokens, false);
+            
+            console.log(`\n--- Free Inference Complete ---`);
             console.log(`Generated ${generatedTokens.length} tokens`);
         }
         
@@ -3034,17 +3094,83 @@
         
         // Continue generation from a specific point (for token replacement)
         async function continueGenerationFrom(currentTokens, numRealTokensStart, SEQUENCE_LENGTH) {
-            console.log(`\n--- Continuing Fast Generation ---`);
-            if (numRealTokensStart >= SEQUENCE_LENGTH + 1) {
-                console.log('The L + 1 token-index buffer is already full.');
-                return;
+            console.log(`\n--- Continuing Generation ---`);
+            console.log(`Starting from ${numRealTokensStart} real tokens`);
+            
+            const maxIterations = SEQUENCE_LENGTH - numRealTokensStart + 1;
+            
+            // Batch UI updates every 3 tokens
+            const BATCH_SIZE = 3;
+            let tokensSinceLastUpdate = 0;
+            
+            for (let iteration = 0; iteration < maxIterations; iteration++) {
+                // Check if user requested stop
+                if (shouldStopGeneration) {
+                    console.log('Generation stopped by user.');
+                    break;
+                }
+                
+                const numRealTokens = numRealTokensStart + iteration;
+                const rightEndIndex = numRealTokens - 1;
+                
+                console.log(`\n--- Iteration ${iteration + 1}: Generating token ${numRealTokens + 1} (rightEndIndex=${rightEndIndex}) ---`);
+                
+                // Rest 200ms before inference
+                // await new Promise(resolve => setTimeout(resolve, 200));
+                
+                lmNetwork.runQueryThroughModel(currentTokens, false, rightEndIndex, iteration > 0);
+
+                // Run inference in free inference mode
+                const rightEndPredictionsRowMajorFlat = await globalThis.readFloat32Buffer(lmNetwork, lmNetwork.rightEndIndexTokenSoftmaxPredictions.buffer, 2 * lmNetwork.vocabSize * 4);
+
+                const rightEndPredictions = [];
+                for (let vocabIndex = 0; vocabIndex < lmNetwork.vocabSize; vocabIndex++) {
+                    rightEndPredictions.push([vocabIndex, rightEndPredictionsRowMajorFlat[vocabIndex * 2 + 1]])
+                }
+                // Sort by probability descending
+                rightEndPredictions.sort((a, b) => b[1] - a[1]);
+                
+                // Get top 10 and convert to topPredictions format
+                const topPredictions = rightEndPredictions.slice(0, 10).map(pred => ({
+                    token: globalThis.vocab[Math.round(pred[0])],
+                    probability: pred[1]
+                }));
+                
+                // The predicted token is the top prediction
+                const predictedToken = topPredictions[0].token;
+                const predictedProb = topPredictions[0].probability;
+                
+                console.log(`Predicted token: "${predictedToken}" with probability ${(predictedProb * 100).toFixed(2)}%`);
+                
+                // Store token data
+                generatedTokens.push({
+                    value: predictedToken,
+                    topPredictions: topPredictions
+                });
+                
+                // Update currentTokens
+                currentTokens[numRealTokens] = predictedToken;
+                
+                // Update UI in batches
+                tokensSinceLastUpdate++;
+                const isLastIteration = rightEndIndex >= (SEQUENCE_LENGTH - 1) || iteration === maxIterations - 1;
+                
+                if (tokensSinceLastUpdate >= BATCH_SIZE || isLastIteration) {
+                    renderFreeInferenceOutput(freeInferenceContextTokens, generatedTokens, true);
+                    tokensSinceLastUpdate = 0;
+                }
+                
+                // Stop if we've reached rightEndIndex of SEQUENCE_LENGTH-1 (e.g., 255)
+                if (rightEndIndex >= (SEQUENCE_LENGTH - 1)) {
+                    console.log(`Reached rightEndIndex of ${SEQUENCE_LENGTH - 1}. Stopping.`);
+                    break;
+                }
             }
-            const seedTokens = currentTokens.slice(0, Math.min(numRealTokensStart, SEQUENCE_LENGTH));
-
-            await decodeFastTokenBatches(seedTokens, freeInferenceContextTokens);
+            
+            // Final render with tooltips enabled
             renderFreeInferenceOutput(freeInferenceContextTokens, generatedTokens, false);
-
-            console.log(`\n--- Fast Continuation Complete ---`);
+            
+            console.log(`\n--- Continuation Complete ---`);
         }
         
         // Handle "Start Over"
